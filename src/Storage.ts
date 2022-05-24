@@ -1,21 +1,27 @@
 import { IEntry } from "./types";
-import { MMKVLoader, useMMKVStorage } from "react-native-mmkv-storage";
+import { MMKVLoader } from "react-native-mmkv-storage";
 
 export default class Storage {
     private static storage = new MMKVLoader().initialize();
+    private static key = 'entries';
 
-    static loadEntries(): IEntry[] {
-        const [entries, setEntries] = useMMKVStorage<IEntry[]>('entries', this.storage, []);
+    static async loadEntries() {
+        const entries = this.storage.getArray<IEntry>(this.key);
         return entries || [];
     }
 
-    static getSum(): number {
-        const [entries, setEntries] = useMMKVStorage<IEntry[]>('entries', this.storage, []);
-        return entries ? entries.reduce((acc, entry) => acc + entry.price, 0) : 0;
+    static async getSum() {
+        const entries = await this.loadEntries();
+        return entries.reduce((acc, entry) => acc + entry.price, 0);
     }
 
-    static saveEntry(entry: IEntry): void {
-        const [entries, setEntries] = useMMKVStorage<IEntry[]>('entries', this.storage, []);
-        entries ? setEntries([...entries, entry]) : setEntries([entry]);
+    static async saveEntry(name: string, price: number, timestamp?: number, id?: number) {
+        const entry = { name, price, timestamp: timestamp || new Date().valueOf(), id: id || (await this.loadEntries()).length };
+        return await this._saveEntry(entry);
+    }
+
+    private static async _saveEntry(entry: IEntry) {
+        const entries = await this.loadEntries();
+        return this.storage.setArray(this.key, [...entries, entry]);
     }
 }

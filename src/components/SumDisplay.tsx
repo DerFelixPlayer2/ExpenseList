@@ -2,54 +2,66 @@ import React from 'react';
 import Storage from '../Storage';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
-interface SumDisplayProps {}
+interface SumDisplayProps {
+	style?: any;
+}
 
 interface SumDisplayState {
 	sum: number;
+	style: any;
 }
 
 export default class SumDisplay extends React.Component<
 	SumDisplayProps,
 	SumDisplayState
 > {
-	componentDidMount() {
+	constructor(props: SumDisplayProps) {
+		super(props);
+
+		this.state = {
+			sum: 0,
+			style: this.props.style,
+		};
+
+		this.getStyle = this.getStyle.bind(this);
+	}
+
+	private getStyle() {
+		return {
+			...styles.text,
+			...this.state.style,
+		};
+	}
+
+	async componentDidMount() {
 		this.setState({
-			sum: Storage.getSum(),
+			sum: await Storage.getSum(),
 		});
 	}
 
+	async componentDidUpdate() {
+		const sum = await Storage.getSum();
+		if (this.state.sum !== sum) {
+			this.setState({ sum });
+		}
+	}
+
 	render() {
-		if (!this.state?.sum) {
+		if (!this.state?.sum && this.state?.sum !== 0) {
 			return (
-				<View style={styles.container}>
+				<View style={this.getStyle()}>
 					<ActivityIndicator />
 				</View>
 			);
 		}
 
-		return (
-			<View style={styles.container}>
-				<Text style={styles.text}>Summe: € {this.state.sum.toFixed(2)}</Text>
-			</View>
-		);
+		return <Text style={this.getStyle()}>€ {this.state.sum.toFixed(2)}</Text>;
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {
-		backgroundColor: '#586cff',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-
-		width: '100%',
-		height: '10%',
-
-		position: 'absolute',
-		bottom: 0,
-	},
 	text: {
 		color: '#fff',
-		fontSize: 20,
+		fontSize: 22,
 	},
 });
