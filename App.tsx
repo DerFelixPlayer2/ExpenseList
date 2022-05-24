@@ -3,8 +3,6 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Storage from './src/Storage';
 import ExpenseList from './src/components/ExpenseList';
-import SumDisplay from './src/components/SumDisplay';
-import AddButton from './src/components/AddButton';
 import TopNav from './src/components/TopNav';
 import PopUp from './src/components/PopUp';
 
@@ -31,14 +29,11 @@ export default class App extends React.Component<AppProps, AppState> {
 		return (
 			<View style={styles.window}>
 				<View style={styles.container}>
-					<TopNav style={styles.top} />
-					<ExpenseList style={styles.list} />
-					<AddButton
-						style={styles.fab}
-						onPress={() => {
-							this.setState({ popupVisible: true });
-						}}
+					<TopNav
+						style={styles.top}
+						onAddButtonPress={() => this.setState({ popupVisible: true })}
 					/>
+					<ExpenseList style={styles.list} />
 				</View>
 				<PopUp
 					style={styles.popup}

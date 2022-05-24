@@ -6,9 +6,7 @@ interface AddButtonProps {
 	onPress: () => void;
 }
 
-interface AddButtonState {
-	style: any;
-}
+interface AddButtonState {}
 
 export default class AddButton extends React.Component<
 	AddButtonProps,
@@ -17,17 +15,13 @@ export default class AddButton extends React.Component<
 	constructor(props: AddButtonProps) {
 		super(props);
 
-		this.state = {
-			style: this.props.style,
-		};
-
 		this.getStyles = this.getStyles.bind(this);
 	}
 
 	private getStyles() {
 		return {
 			...styles.container,
-			...this.state.style,
+			...this.props.style,
 		};
 	}
 
@@ -44,36 +38,35 @@ export default class AddButton extends React.Component<
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: 'red',
+		//		backgroundColor: 'green',
 
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
 
-		borderRadius: 100,
 		zIndex: 99,
 		margin: '10%',
 	},
 	inner_h: {
 		backgroundColor: 'white',
 		borderRadius: 1,
-		width: '25%',
+		width: '35%',
 		height: '5%',
 	},
 	inner_v1: {
 		backgroundColor: 'white',
 		borderBottomLeftRadius: 0,
 		borderBottomRightRadius: 0,
-		borderRadius: 1,
+		borderRadius: 100,
 		width: '5%',
-		height: '10%',
+		height: '15%',
 	},
 	inner_v2: {
 		backgroundColor: 'white',
 		borderTopLeftRadius: 0,
 		borderTopRightRadius: 0,
-		borderRadius: 1,
+		borderRadius: 100,
 		width: '5%',
-		height: '10%',
+		height: '15%',
 	},
 });

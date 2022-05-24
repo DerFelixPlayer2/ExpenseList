@@ -115,7 +115,7 @@ export default class ExpenseList extends React.Component<
 					sections={data}
 					initialNumToRender={10}
 					stickySectionHeadersEnabled={true}
-					fadingEdgeLength={0}
+					progressViewOffset={40}
 					overScrollMode="never"
 					refreshing={this.state.refreshing}
 					onRefresh={this.onRefresh}
@@ -192,14 +192,14 @@ function formatDate(timestamp: number): string {
 	return `${months_long_de[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-// TODO
 const styles = StyleSheet.create({
 	seperator: {
 		backgroundColor: '#666',
 
 		height: 1,
 
-		marginLeft: 30,
+		marginLeft: 7,
+		marginRight: 7,
 	},
 	list: {
 		backgroundColor: '#282830',

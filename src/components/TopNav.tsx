@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import AddButton from './AddButton';
 import SumDisplay from './SumDisplay';
 
 interface TopNavProps {
 	style?: any;
+	onAddButtonPress: () => void;
 }
 
 interface TopNavState {}
@@ -17,8 +19,8 @@ export default class TopNav extends React.Component<TopNavProps, TopNavState> {
 
 	private getStyle() {
 		return {
-			...styles.container,
 			...this.props.style,
+			...styles.container,
 		};
 	}
 
@@ -27,6 +29,7 @@ export default class TopNav extends React.Component<TopNavProps, TopNavState> {
 			<View style={this.getStyle()}>
 				<Text style={styles.text}>Expense List</Text>
 				<SumDisplay />
+				<AddButton style={styles.btn} onPress={this.props.onAddButtonPress} />
 			</View>
 		);
 	}
@@ -48,5 +51,10 @@ const styles = StyleSheet.create({
 		fontSize: 23,
 
 		paddingBottom: '3%',
+	},
+	btn: {
+		position: 'absolute',
+		right: -23,
+		bottom: -14,
 	},
 });

@@ -12,7 +12,6 @@ interface EntryState {
 	ago: string;
 }
 
-// TODO
 export default class Entry extends React.Component<EntryProps, EntryState> {
 	constructor(props: EntryProps) {
 		super(props);
@@ -74,10 +73,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#282830',
 
 		marginTop: 5,
-		padding: 10,
-		paddingBottom: 13,
-		paddingRight: 15,
-		paddingLeft: 30,
+		paddingTop: 10,
+		padding: 15,
 	},
 	top_wrap: {
 		display: 'flex',
