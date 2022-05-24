@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { Text, StyleSheet, SectionList, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, SectionList, View, RefreshControl } from 'react-native';
 import { IEntry } from '../types';
 import Storage from '../Storage';
 import { ActivityIndicator } from 'react-native';
@@ -12,22 +12,29 @@ interface ExpenseListProps {
 
 interface ExpenseListState {
 	entries: IEntry[];
+	refreshing: boolean;
 	style: any;
 }
+
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export default class ExpenseList extends React.Component<
 	ExpenseListProps,
 	ExpenseListState
 > {
+	refreshing = false;
+
 	constructor(props: ExpenseListProps) {
 		super(props);
 
 		this.state = {
 			entries: [],
+			refreshing: false,
 			style: this.props.style,
 		};
 
 		this.getStyles = this.getStyles.bind(this);
+		this.onRefresh = this.onRefresh.bind(this);
 	}
 
 	async componentDidMount() {
@@ -43,10 +50,9 @@ export default class ExpenseList extends React.Component<
 		Storage.loadEntries()
 			.then((entries) => entries.reverse())
 			.then((entries) => {
-				let needsUpdate = false;
-				needsUpdate = entries.some((v, i) => {
+				const needsUpdate = entries.some((v, i) => {
 					return Object.entries(v).some(([key, value]) => {
-						if (value !== this.state.entries[i]?.[key]) return true;
+						if (value !== this.state.entries[i]?.[key as any]) return true;
 						return false;
 					});
 				});
@@ -58,11 +64,12 @@ export default class ExpenseList extends React.Component<
 			.catch(console.error); // TODO: error handling (error loading content) or just keep old data(?)
 
 		if (
+			nextState.refreshing !== this.state.refreshing ||
 			JSON.stringify(nextState.entries) !== JSON.stringify(this.state.entries)
 		)
 			return true;
 		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key];
+			return value !== this.props[key as any];
 		});
 	}
 
@@ -73,8 +80,23 @@ export default class ExpenseList extends React.Component<
 		};
 	}
 
+	async onRefresh() {
+		this.setState({ refreshing: true });
+		const entries = await Storage.loadEntries();
+		const needsUpdate = entries.some((v, i) => {
+			return Object.entries(v).some(([key, value]) => {
+				if (value !== this.state.entries[i]?.[key as any]) return true;
+				return false;
+			});
+		});
+
+		if (needsUpdate || entries.length !== this.state.entries.length) {
+			this.setState({ refreshing: false, entries });
+		} else this.setState({ refreshing: false });
+	}
+
 	render() {
-		if (this.state?.entries?.length === 0) {
+		if (this.state.entries.length === 0) {
 			return <ActivityIndicator size="large" style={this.getStyles()} />;
 		}
 
@@ -90,10 +112,12 @@ export default class ExpenseList extends React.Component<
 			<View style={this.getStyles()}>
 				<SectionList
 					sections={data}
-					initialNumToRender={15}
+					initialNumToRender={10}
 					stickySectionHeadersEnabled={true}
 					fadingEdgeLength={0}
 					overScrollMode="never"
+					refreshing={this.state.refreshing}
+					onRefresh={this.onRefresh}
 					keyExtractor={(item) => item.timestamp.toString()}
 					ItemSeparatorComponent={() => <View style={styles.seperator} />}
 					renderItem={({ item }) => createEntry(item)}
@@ -165,10 +189,10 @@ const styles = StyleSheet.create({
 
 		height: 1,
 
-		marginLeft: 50,
+		marginLeft: 30,
 	},
 	list: {
-		backgroundColor: '#333',
+		backgroundColor: '#282830',
 		//marginTop: '10%',
 	},
 });

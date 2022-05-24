@@ -12,15 +12,31 @@ class SectionHeader extends React.Component<
 	SectionHeaderState
 > {
 	render() {
-		return <Text style={styles.header}>{this.props.title}</Text>;
+		return (
+			<View style={styles.container}>
+				<Text style={styles.header}>{this.props.title}</Text>
+			</View>
+		);
 	}
 }
 
 export default SectionHeader;
 
 const styles = StyleSheet.create({
+	container: {
+		backgroundColor: '#15141a',
+
+		width: '100%',
+		height: 40,
+
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'flex-start',
+	},
 	header: {
-		backgroundColor: 'black',
 		color: 'white',
+		fontWeight: 'bold',
+
+		marginLeft: 15,
 	},
 });

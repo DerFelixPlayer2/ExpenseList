@@ -23,12 +23,11 @@ export default class App extends React.Component<AppProps, AppState> {
 	shouldComponentUpdate(nextProps: AppProps, nextState: AppState) {
 		if (nextState.popupVisible !== this.state.popupVisible) return true;
 		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key];
+			return value !== this.props[key as any];
 		});
 	}
 
 	render() {
-		//Storage.loadEntries().then(console.log);
 		console.log('first');
 
 		return (
@@ -36,7 +35,6 @@ export default class App extends React.Component<AppProps, AppState> {
 				<View style={styles.container}>
 					<TopNav style={styles.top} />
 					<ExpenseList style={styles.list} />
-					{/* <SumDisplay style={styles.display} /> */}
 					<AddButton
 						style={styles.fab}
 						onPress={() => {

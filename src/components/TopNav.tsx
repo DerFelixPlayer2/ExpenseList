@@ -34,7 +34,7 @@ export default class TopNav extends React.Component<TopNavProps, TopNavState> {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: 'rgb(200, 33, 33)',
+		backgroundColor: '#cf4a1d',
 
 		paddingLeft: '10%',
 		paddingTop: '5%',
