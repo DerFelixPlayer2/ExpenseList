@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SectionList, View, RefreshControl } from 'react-native';
+import { StyleSheet, SectionList, View, Text } from 'react-native';
 import { IEntry } from '../types';
 import Storage from '../Storage';
 import { ActivityIndicator } from 'react-native';
@@ -29,7 +29,7 @@ export default class ExpenseList extends React.Component<
 
 		this.state = {
 			entries: [],
-			refreshing: false,
+			refreshing: true,
 			style: this.props.style,
 		};
 
@@ -40,6 +40,7 @@ export default class ExpenseList extends React.Component<
 	async componentDidMount() {
 		this.setState({
 			entries: (await Storage.loadEntries()).reverse(),
+			refreshing: false,
 		});
 	}
 
@@ -96,7 +97,7 @@ export default class ExpenseList extends React.Component<
 	}
 
 	render() {
-		if (this.state.entries.length === 0) {
+		if (this.state.entries.length === 0 && this.state.refreshing) {
 			return <ActivityIndicator size="large" style={this.getStyles()} />;
 		}
 
@@ -119,6 +120,7 @@ export default class ExpenseList extends React.Component<
 					refreshing={this.state.refreshing}
 					onRefresh={this.onRefresh}
 					keyExtractor={(item) => item.timestamp.toString()}
+					ListEmptyComponent={emptyListComponent}
 					ItemSeparatorComponent={() => <View style={styles.seperator} />}
 					renderItem={({ item }) => createEntry(item)}
 					renderSectionHeader={({ section }) => createSectionHeader(section)}
@@ -131,6 +133,14 @@ export default class ExpenseList extends React.Component<
 function createEntry(entry: IEntry): JSX.Element {
 	return (
 		<Entry name={entry.name} price={entry.price} timestamp={entry.timestamp} />
+	);
+}
+
+function emptyListComponent(): JSX.Element {
+	return (
+		<View style={styles.emptyList}>
+			<Text style={styles.emptyListText}>No entries found.</Text>
+		</View>
 	);
 }
 
@@ -193,6 +203,19 @@ const styles = StyleSheet.create({
 	},
 	list: {
 		backgroundColor: '#282830',
-		//marginTop: '10%',
+	},
+	emptyList: {
+		width: '100%',
+
+		marginTop: '50%',
+
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	emptyListText: {
+		color: 'white',
+		fontSize: 24,
+		fontWeight: 'bold',
 	},
 });

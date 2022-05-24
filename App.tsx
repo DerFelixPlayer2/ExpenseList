@@ -28,8 +28,6 @@ export default class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		console.log('first');
-
 		return (
 			<View style={styles.window}>
 				<View style={styles.container}>
@@ -38,7 +36,6 @@ export default class App extends React.Component<AppProps, AppState> {
 					<AddButton
 						style={styles.fab}
 						onPress={() => {
-							console.log('second');
 							this.setState({ popupVisible: true });
 						}}
 					/>
@@ -47,7 +44,6 @@ export default class App extends React.Component<AppProps, AppState> {
 					style={styles.popup}
 					isVisible={this.state.popupVisible}
 					callback={(canceled, data) => {
-						console.log('third');
 						if (!canceled && data) {
 							Storage.saveEntry(data.name, data.price).then(() =>
 								this.setState({ popupVisible: false })
@@ -76,14 +72,14 @@ const styles = StyleSheet.create({
 	top: {
 		width: '100%',
 
-		flexBasis: '20%',
+		flexBasis: '15%',
 		flexGrowing: 1,
 		flexShrink: 1,
 	},
 	list: {
 		width: '100%',
 
-		flexBasis: '100%',
+		flexBasis: '85%',
 		flexGrowing: 1,
 		flexShrink: 1,
 	},

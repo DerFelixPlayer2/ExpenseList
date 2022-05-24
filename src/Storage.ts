@@ -24,4 +24,8 @@ export default class Storage {
         const entries = await this.loadEntries();
         return this.storage.setArray(this.key, [...entries, entry]);
     }
+
+    static async purgeEntries() {
+        return this.storage.removeItem(this.key) || false;
+    }
 }
