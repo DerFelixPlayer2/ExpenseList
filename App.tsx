@@ -6,7 +6,9 @@ import ExpenseList from './src/components/ExpenseList';
 import TopNav from './src/components/TopNav';
 import PopUp from './src/components/PopUp';
 
-interface AppProps {}
+interface AppProps {
+	[key: string]: any;
+}
 
 interface AppState {
 	popupVisible: boolean;
@@ -31,12 +33,14 @@ export default class App extends React.Component<AppProps, AppState> {
 				<View style={styles.container}>
 					<TopNav
 						style={styles.top}
-						onAddButtonPress={() => this.setState({ popupVisible: true })}
+						onAddButtonPress={() => {
+							//Storage.purgeEntries();
+							this.setState({ popupVisible: true });
+						}}
 					/>
 					<ExpenseList style={styles.list} />
 				</View>
 				<PopUp
-					style={styles.popup}
 					isVisible={this.state.popupVisible}
 					callback={(canceled, data) => {
 						if (!canceled && data) {
@@ -83,12 +87,4 @@ const styles = StyleSheet.create({
 		bottom: '10%',
 		right: 0,
 	},
-	display: {
-		width: '100%',
-
-		flexBasis: '10%',
-		flexGrowing: 1,
-		flexShrink: 1,
-	},
-	popup: {},
 });

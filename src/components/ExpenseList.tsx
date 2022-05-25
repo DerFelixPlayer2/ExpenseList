@@ -7,6 +7,7 @@ import Entry from './Entry';
 import SectionHeader from './SectionHeader';
 
 interface ExpenseListProps {
+	[key: string]: any;
 	style?: any;
 }
 
