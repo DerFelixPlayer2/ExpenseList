@@ -23,7 +23,7 @@ export default class App extends React.Component<AppProps, AppState> {
 	shouldComponentUpdate(nextProps: AppProps, nextState: AppState) {
 		if (nextState.popupVisible !== this.state.popupVisible) return true;
 		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key as any];
+			return value !== this.props[key];
 		});
 	}
 

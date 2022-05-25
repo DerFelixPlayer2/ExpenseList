@@ -54,7 +54,7 @@ export default class ExpenseList extends React.Component<
 			.then((entries) => {
 				const needsUpdate = entries.some((v, i) => {
 					return Object.entries(v).some(([key, value]) => {
-						if (value !== this.state.entries[i]?.[key as any]) return true;
+						if (value !== this.state.entries[i]?.[key]) return true;
 						return false;
 					});
 				});
@@ -71,7 +71,7 @@ export default class ExpenseList extends React.Component<
 		)
 			return true;
 		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key as any];
+			return value !== this.props[key];
 		});
 	}
 
@@ -87,7 +87,7 @@ export default class ExpenseList extends React.Component<
 		const entries = await Storage.loadEntries();
 		const needsUpdate = entries.some((v, i) => {
 			return Object.entries(v).some(([key, value]) => {
-				if (value !== this.state.entries[i]?.[key as any]) return true;
+				if (value !== this.state.entries[i]?.[key]) return true;
 				return false;
 			});
 		});
