@@ -3,7 +3,6 @@ import { StyleSheet, SectionList, View, Text } from 'react-native';
 import { IEntry } from '../../../types';
 import Storage from '../../../Storage';
 import { eventEmitter } from '../../../Globals';
-import { ActivityIndicator } from 'react-native';
 import Entry from './Entry';
 import SectionHeader from './SectionHeader';
 
