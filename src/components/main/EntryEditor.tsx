@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, TextInput, StyleSheet, Pressable } from 'react-native';
-import Storage from '../Storage';
-import { IEntry } from '../types';
+import Storage from '../../Storage';
+import { IEntry } from '../../types';
 import { EventEmitter } from 'eventemitter3';
 
 interface EntryEditorProps {

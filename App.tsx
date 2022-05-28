@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import { IEntry } from './src/types';
 import Storage from './src/Storage';
-import ExpenseList from './src/components/ExpenseList';
-import TopNav from './src/components/TopNav';
-import PopUp from './src/components/PopUp';
-import EntryEditor from './src/components/EntryEditor';
+import ExpenseList from './src/components/main/list/ExpenseList';
+import TopNav from './src/components/top/TopNav';
+import PopUp from './src/components/main/PopUp';
+import EntryEditor from './src/components/main/EntryEditor';
 
 interface AppProps {
 	[key: string]: any;

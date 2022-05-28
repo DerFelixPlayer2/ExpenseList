@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, SectionList, View, Text } from 'react-native';
-import { IEntry } from '../types';
-import Storage from '../Storage';
+import { IEntry } from '../../../types';
+import Storage from '../../../Storage';
 import { ActivityIndicator } from 'react-native';
 import Entry from './Entry';
 import SectionHeader from './SectionHeader';
