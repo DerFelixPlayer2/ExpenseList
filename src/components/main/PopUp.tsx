@@ -1,14 +1,6 @@
 import { enableExpoCliLogging } from 'expo/build/logs/Logs';
 import React from 'react';
-import {
-	View,
-	Text,
-	Modal,
-	StyleSheet,
-	TextInput,
-	Button,
-	GestureResponderEvent,
-} from 'react-native';
+import { View, Text, Modal, StyleSheet, TextInput, Button } from 'react-native';
 
 interface PopUpProps {
 	[key: string]: any;
@@ -19,41 +11,15 @@ interface PopUpProps {
 }
 
 interface PopUpState {
-	visible: boolean;
 	name: string;
 	price: number;
 }
 
 export default class PopUp extends React.Component<PopUpProps, PopUpState> {
-	constructor(props: PopUpProps) {
-		super(props);
-		this.state = { visible: this.props.isVisible, name: '', price: 0 };
-		this.onAdd = this.onAdd.bind(this);
-		this.onCancel = this.onCancel.bind(this);
-	}
+	state = { name: '', price: 0 };
 
-	UNSAFE_componentWillReceiveProps(nextProps: PopUpProps) {
-		if (nextProps.isVisible !== this.props.isVisible) {
-			this.setState({ visible: nextProps.isVisible });
-		}
-	}
-
-	shouldComponentUpdate(nextProps: PopUpProps, nextState: PopUpState) {
-		if (nextState.visible !== this.state.visible) return true;
-		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key];
-		});
-	}
-
-	private onAdd(e: GestureResponderEvent) {
-		this.props.callback(false, {
-			name: this.state.name,
-			price: this.state.price,
-		});
-	}
-
-	private onCancel() {
-		this.props.callback(true);
+	shouldComponentUpdate(nextProps: PopUpProps) {
+		return this.props.isVisible !== nextProps.isVisible;
 	}
 
 	render() {
@@ -63,7 +29,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 					animationType="slide"
 					transparent={true}
 					onRequestClose={this.props.onRequestClose}
-					visible={this.state.visible}>
+					visible={this.props.isVisible}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
 							<Text style={styles.text}>Name: </Text>
@@ -84,8 +50,19 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 								onChangeText={(v) => this.setState({ price: parseFloat(v) })}
 							/>
 							<View style={styles.button_wrapper}>
-								<Button title="Cancel" onPress={this.onCancel} />
-								<Button title="Add" onPress={this.onAdd} />
+								<Button
+									title="Cancel"
+									onPress={() => this.props.callback(true)}
+								/>
+								<Button
+									title="Add"
+									onPress={() =>
+										this.props.callback(false, {
+											name: this.state.name,
+											price: this.state.price,
+										})
+									}
+								/>
 							</View>
 						</View>
 					</View>

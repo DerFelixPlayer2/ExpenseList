@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import AddButton from '../main/AddButton';
+import AddButton from './AddButton';
 import SumDisplay from './SumDisplay';
 
 interface TopNavProps {

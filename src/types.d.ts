@@ -6,4 +6,3 @@ export interface IEntry {
     edits?: number[],
     id: number;
 }
-

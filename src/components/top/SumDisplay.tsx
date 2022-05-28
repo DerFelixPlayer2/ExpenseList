@@ -1,6 +1,7 @@
 import React from 'react';
-import Storage from '../Storage';
+import Storage from '../../Storage';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { eventEmitter } from '../../Globals';
 
 interface SumDisplayProps {
 	style?: any;
@@ -8,42 +9,38 @@ interface SumDisplayProps {
 
 interface SumDisplayState {
 	sum: number;
-	style: any;
 }
 
 export default class SumDisplay extends React.Component<
 	SumDisplayProps,
 	SumDisplayState
 > {
-	constructor(props: SumDisplayProps) {
-		super(props);
+	state = {
+		sum: 0,
+	};
 
-		this.state = {
-			sum: 0,
-			style: this.props.style,
-		};
-
-		this.getStyle = this.getStyle.bind(this);
-	}
-
-	private getStyle() {
+	private getStyle = () => {
 		return {
 			...styles.text,
-			...this.state.style,
+			...this.props.style,
 		};
-	}
+	};
 
-	async componentDidMount() {
+	private onListChange = async () => {
+		console.info('display update');
 		this.setState({
 			sum: await Storage.getSum(),
 		});
+	};
+
+	async componentDidMount() {
+		eventEmitter.addListener('listChanged', this.onListChange);
+		this.onListChange();
 	}
 
-	async componentDidUpdate() {
-		const sum = await Storage.getSum();
-		if (this.state.sum !== sum) {
-			this.setState({ sum });
-		}
+	componentWillUnmount() {
+		console.warn('display unmount');
+		eventEmitter.removeListener('listChanged', this.onListChange);
 	}
 
 	render() {
