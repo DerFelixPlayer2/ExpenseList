@@ -44,8 +44,13 @@ export default class ExpenseList extends React.Component<
 		});
 
 		if (needsUpdate || entries.length !== this.state.entries.length) {
-			this.setState({ refreshing: false, entries });
-		} else this.setState({ refreshing: false });
+			this.setState({ refreshing: false, entries }, () =>
+				eventEmitter.emit('updateEntries')
+			);
+		} else
+			this.setState({ refreshing: false }, () =>
+				eventEmitter.emit('updateEntries')
+			);
 	};
 
 	async componentDidMount() {
@@ -59,11 +64,10 @@ export default class ExpenseList extends React.Component<
 
 	componentWillUnmount() {
 		eventEmitter.removeListener('listChanged', this.onRefresh);
+		eventEmitter.removeListener('updateEntries');
 	}
 
 	render() {
-		console.log('renderList', JSON.stringify(this.state.entries));
-
 		const sections = mapDateToEntries(this.state.entries);
 		const data = Object.entries(sections).map(([section, { entries }]) => {
 			return {

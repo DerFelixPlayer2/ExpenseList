@@ -27,7 +27,6 @@ export default class SumDisplay extends React.Component<
 	};
 
 	private onListChange = async () => {
-		console.info('display update');
 		this.setState({
 			sum: await Storage.getSum(),
 		});
@@ -39,7 +38,6 @@ export default class SumDisplay extends React.Component<
 	}
 
 	componentWillUnmount() {
-		console.warn('display unmount');
 		eventEmitter.removeListener('listChanged', this.onListChange);
 	}
 

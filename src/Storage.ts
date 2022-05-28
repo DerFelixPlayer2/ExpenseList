@@ -8,7 +8,6 @@ export default class Storage {
 
     static async loadEntries() {
         const entries = await this.storage.getArrayAsync<IEntry>(this.key);
-        console.log('loadingEntries', entries)
         return entries || [];
     }
 
@@ -25,14 +24,12 @@ export default class Storage {
     private static async _saveEntry(entry: IEntry) {
         const entries = await this.loadEntries();
         const r = await this.storage.setArrayAsync(this.key, [...entries, entry]);
-        console.log('listChanged', JSON.stringify(entries, null, 2), entry)
         eventEmitter.emit('listChanged');
         return r || false;
     }
 
     static async purgeEntries() {
         const r = this.storage.removeItem(this.key);
-        console.log("purge")
         eventEmitter.emit('listChanged');
         return r || false;
     }
@@ -56,7 +53,6 @@ export default class Storage {
         _newEntry.edits.push(new Date().valueOf());
 
         const r = await this.storage.setArrayAsync(this.key, entries.map(entry => entry.id === id ? _newEntry : entry))
-        console.log("update")
         eventEmitter.emit('listChanged');
         return r || false;
     }

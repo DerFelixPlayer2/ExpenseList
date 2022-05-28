@@ -1,5 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Text, StyleSheet, View, Pressable } from 'react-native';
+import { eventEmitter } from '../../../Globals';
 
 interface EntryProps {
 	style?: any;
@@ -24,23 +25,30 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 
 	private static getAgo(timestamp: number): string {
 		const date = new Date(timestamp);
-		const dateString = date.toLocaleDateString();
 		const now = new Date();
-		const nowString = now.toLocaleDateString();
 		const diff = (now.getTime() - date.getTime()) / 1000;
 		if (diff < 86400) {
 			if (diff < 60) return `Vor weniger als einer Minute`;
 			else if (diff <= 180) return `Vor wenigen Minuten`;
-			else if (diff < 3600) return `Vor ${(diff / 60).toFixed(0)} Minuten`;
-			else if (diff < 86400) return `Vor ${(diff / 3600).toFixed(0)} Stunden`;
-		} else if (
-			new Date(date.setDate(date.getDate() + 1))
-				.toLocaleDateString()
-				.localeCompare(nowString) === 0
-		) {
+			else if (diff < 3600) return `Vor ${Math.floor(diff / 60)} Minuten`;
+			else {
+				const h = Math.floor(diff / 3600);
+				if (h === 1) return `Vor einer Stunde`;
+				else return `Vor ${h} Stunden`;
+			}
+		} else if (diff < 172800) {
 			return 'Gestern';
+		} else {
+			return `${date.getDay()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 		}
-		return dateString.replace(/[/]/g, '.'); // TODO
+	}
+
+	componentDidMount() {
+		eventEmitter.addListener('updateEntries', () => {
+			this.setState({
+				ago: Entry.getAgo(this.props.timestamp),
+			});
+		});
 	}
 
 	render() {

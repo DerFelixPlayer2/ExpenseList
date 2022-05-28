@@ -27,12 +27,12 @@ interface AppState {
  *   - Shortcuts
  * - Entry editor / detailed view
  * 	- Make different design for income and expense
+ *  - Make it more clear that entries are editable (edit svg)
+ * 		- same for delete
  * - Search bar
  *
  * FIX:
- * - only first and last entry updating
  * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
- * - List not updating on refresh
  *
  */
 
@@ -41,8 +41,6 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 
 	constructor(props: AppProps) {
 		super(props);
-		console.log('HI');
-		//Storage.purgeEntries();
 		this.state = { popupVisible: false, entryEditor: null };
 	}
 
