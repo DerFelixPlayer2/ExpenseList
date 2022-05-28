@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Pressable } from 'react-native';
 
 interface EntryProps {
 	style?: any;
+	onPress: () => void;
 	name: string;
 	timestamp: number;
 	price: number;
@@ -39,16 +40,16 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 		) {
 			return 'Gestern';
 		}
-		return dateString.replace(/[/]/g, '.');
+		return dateString.replace(/[/]/g, '.'); // TODO
 	}
 
 	render() {
 		return (
-			<View style={{ ...styles.container, ...this.props.style }}>
+			<Pressable
+				style={{ ...styles.container, ...this.props.style }}
+				onPress={this.props.onPress}>
 				<View style={styles.top_wrap}>
-					<Text
-						style={{ ...styles.text_main, ...styles.name }}
-						ellipsizeMode="tail">
+					<Text style={{ ...styles.text_main, ...styles.name }}>
 						{this.props.name}
 					</Text>
 					<Text
@@ -63,14 +64,14 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 				<View>
 					<Text style={styles.text_sub}>{this.state.ago}</Text>
 				</View>
-			</View>
+			</Pressable>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#282830',
+		backgroundColor: '#292938',
 
 		marginTop: 5,
 		paddingTop: 10,
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
 	},
 	text_sub: {
 		color: 'white',
+		opacity: 0.7,
 		fontSize: 12,
 	},
 });

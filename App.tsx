@@ -1,10 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {
+	BackHandler,
+	NativeEventSubscription,
+	StyleSheet,
+	View,
+} from 'react-native';
+import { IEntry } from './src/types';
 import Storage from './src/Storage';
 import ExpenseList from './src/components/ExpenseList';
 import TopNav from './src/components/TopNav';
 import PopUp from './src/components/PopUp';
+import EntryEditor from './src/components/EntryEditor';
 
 interface AppProps {
 	[key: string]: any;
@@ -12,22 +19,55 @@ interface AppProps {
 
 interface AppState {
 	popupVisible: boolean;
+	entryEditor: IEntry | null;
 }
 
+/** TODOs:
+ * - Rework add entry menu (PopUp)
+ *   - Shortcuts
+ * - Entry editor / detailed view
+ * - Search bar
+ *
+ * FIX:
+ * - only first and last entry updating
+ * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
+ *
+ */
+
 export default class App extends React.Component<AppProps, AppState> {
+	private backHandler?: NativeEventSubscription;
+
 	constructor(props: AppProps) {
 		super(props);
-		this.state = { popupVisible: false };
+		this.state = { popupVisible: false, entryEditor: null };
+	}
+
+	componentDidMount() {
+		this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+			if (this.state.entryEditor !== null) {
+				this.setState({ entryEditor: null });
+				return true;
+			}
+			return false;
+		});
+	}
+
+	componentWillUnmount() {
+		this.backHandler?.remove();
 	}
 
 	shouldComponentUpdate(nextProps: AppProps, nextState: AppState) {
+		console.log('state', this.state, nextState);
 		if (nextState.popupVisible !== this.state.popupVisible) return true;
+		if (nextState.entryEditor !== this.state.entryEditor) return true;
 		return Object.entries(nextProps).some(([key, value]) => {
 			return value !== this.props[key];
 		});
 	}
 
 	render() {
+		//Storage.purgeEntries();
+
 		return (
 			<View style={styles.window}>
 				<View style={styles.container}>
@@ -38,16 +78,25 @@ export default class App extends React.Component<AppProps, AppState> {
 							this.setState({ popupVisible: true });
 						}}
 					/>
-					<ExpenseList style={styles.list} />
+					{this.state.entryEditor !== null ? (
+						<EntryEditor entry={this.state.entryEditor} style={styles.editor} />
+					) : (
+						<ExpenseList
+							style={styles.list}
+							onPress={(entry) => {
+								this.setState({ entryEditor: entry });
+							}}
+						/>
+					)}
 				</View>
 				<PopUp
 					isVisible={this.state.popupVisible}
-					callback={(canceled, data) => {
+					onRequestClose={() => this.setState({ popupVisible: false })}
+					callback={async (canceled, data) => {
 						if (!canceled && data) {
-							Storage.saveEntry(data.name, data.price).then(() =>
-								this.setState({ popupVisible: false })
-							);
-						} else this.setState({ popupVisible: false });
+							await Storage.saveEntry(data.name, data.price);
+						}
+						this.setState({ popupVisible: false });
 					}}
 				/>
 				<StatusBar style="auto" />
@@ -82,9 +131,11 @@ const styles = StyleSheet.create({
 		flexGrowing: 1,
 		flexShrink: 1,
 	},
-	fab: {
-		position: 'absolute',
-		bottom: '10%',
-		right: 0,
+	editor: {
+		width: '100%',
+
+		flexBasis: '85%',
+		flexGrowing: 1,
+		flexShrink: 1,
 	},
 });

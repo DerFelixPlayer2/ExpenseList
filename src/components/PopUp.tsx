@@ -11,8 +11,10 @@ import {
 } from 'react-native';
 
 interface PopUpProps {
+	[key: string]: any;
 	style?: any;
 	isVisible: boolean;
+	onRequestClose: () => void;
 	callback: (canceled: boolean, data?: { name: string; price: number }) => void;
 }
 
@@ -60,6 +62,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 				<Modal
 					animationType="slide"
 					transparent={true}
+					onRequestClose={this.props.onRequestClose}
 					visible={this.state.visible}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
@@ -134,4 +137,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-around',
 		alignItems: 'center',
 	},
+	text: {},
 });

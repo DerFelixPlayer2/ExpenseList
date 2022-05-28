@@ -9,6 +9,7 @@ import SectionHeader from './SectionHeader';
 interface ExpenseListProps {
 	[key: string]: any;
 	style?: any;
+	onPress: (entry: IEntry) => void;
 }
 
 interface ExpenseListState {
@@ -16,8 +17,6 @@ interface ExpenseListState {
 	refreshing: boolean;
 	style: any;
 }
-
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export default class ExpenseList extends React.Component<
 	ExpenseListProps,
@@ -39,10 +38,21 @@ export default class ExpenseList extends React.Component<
 	}
 
 	async componentDidMount() {
+		Storage.EE.addListener('listChanged', async () => {
+			this.setState({
+				entries: (await Storage.loadEntries()).reverse(),
+				refreshing: false,
+			});
+		});
+
 		this.setState({
 			entries: (await Storage.loadEntries()).reverse(),
 			refreshing: false,
 		});
+	}
+
+	componentWillUnmount() {
+		Storage.EE.removeListener('listChanged');
 	}
 
 	shouldComponentUpdate(
@@ -82,7 +92,7 @@ export default class ExpenseList extends React.Component<
 		};
 	}
 
-	async onRefresh() {
+	private async onRefresh() {
 		this.setState({ refreshing: true });
 		const entries = await Storage.loadEntries();
 		const needsUpdate = entries.some((v, i) => {
@@ -123,7 +133,7 @@ export default class ExpenseList extends React.Component<
 					keyExtractor={(item) => item.timestamp.toString()}
 					ListEmptyComponent={emptyListComponent}
 					ItemSeparatorComponent={() => <View style={styles.seperator} />}
-					renderItem={({ item }) => createEntry(item)}
+					renderItem={({ item }) => createEntry(item, this.props.onPress)}
 					renderSectionHeader={({ section }) => createSectionHeader(section)}
 				/>
 			</View>
@@ -131,9 +141,17 @@ export default class ExpenseList extends React.Component<
 	}
 }
 
-function createEntry(entry: IEntry): JSX.Element {
+function createEntry(
+	entry: IEntry,
+	onPress: (entry: IEntry) => void
+): JSX.Element {
 	return (
-		<Entry name={entry.name} price={entry.price} timestamp={entry.timestamp} />
+		<Entry
+			name={entry.name}
+			price={entry.price}
+			timestamp={entry.timestamp}
+			onPress={() => onPress(entry)}
+		/>
 	);
 }
 
@@ -158,7 +176,6 @@ function mapDateToEntries(entries: IEntry[]) {
 	const sections: { [key: string]: { entries: IEntry[] } } = {};
 
 	entries.forEach((entry) => {
-		const date = new Date(entry.timestamp);
 		const dateString = formatDate(entry.timestamp);
 
 		if (!sections[dateString]) {
@@ -203,7 +220,7 @@ const styles = StyleSheet.create({
 		marginRight: 7,
 	},
 	list: {
-		backgroundColor: '#282830',
+		backgroundColor: '#292938',
 	},
 	emptyList: {
 		width: '100%',
