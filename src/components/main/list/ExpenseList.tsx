@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, SectionList, View, Text } from 'react-native';
 import { IEntry } from '../../../types';
 import Storage from '../../../Storage';
-import { ActivityIndicator } from 'react-native';
+import { eventEmitter } from '../../../Globals';
 import Entry from './Entry';
 import SectionHeader from './SectionHeader';
 
@@ -15,86 +15,27 @@ interface ExpenseListProps {
 interface ExpenseListState {
 	entries: IEntry[];
 	refreshing: boolean;
-	style: any;
 }
 
 export default class ExpenseList extends React.Component<
 	ExpenseListProps,
 	ExpenseListState
 > {
-	refreshing = false;
+	state = {
+		entries: [],
+		refreshing: true,
+	};
 
-	constructor(props: ExpenseListProps) {
-		super(props);
-
-		this.state = {
-			entries: [],
-			refreshing: true,
-			style: this.props.style,
-		};
-
-		this.getStyles = this.getStyles.bind(this);
-		this.onRefresh = this.onRefresh.bind(this);
-	}
-
-	async componentDidMount() {
-		Storage.EE.addListener('listChanged', async () => {
-			this.setState({
-				entries: (await Storage.loadEntries()).reverse(),
-				refreshing: false,
-			});
-		});
-
-		this.setState({
-			entries: (await Storage.loadEntries()).reverse(),
-			refreshing: false,
-		});
-	}
-
-	componentWillUnmount() {
-		Storage.EE.removeListener('listChanged');
-	}
-
-	shouldComponentUpdate(
-		nextProps: ExpenseListProps,
-		nextState: ExpenseListState
-	) {
-		Storage.loadEntries()
-			.then((entries) => entries.reverse())
-			.then((entries) => {
-				const needsUpdate = entries.some((v, i) => {
-					return Object.entries(v).some(([key, value]) => {
-						if (value !== this.state.entries[i]?.[key]) return true;
-						return false;
-					});
-				});
-
-				if (needsUpdate || entries.length !== this.state.entries.length) {
-					this.setState({ entries });
-				}
-			})
-			.catch(console.error); // TODO: error handling (error loading content) or just keep old data(?)
-
-		if (
-			nextState.refreshing !== this.state.refreshing ||
-			JSON.stringify(nextState.entries) !== JSON.stringify(this.state.entries)
-		)
-			return true;
-		return Object.entries(nextProps).some(([key, value]) => {
-			return value !== this.props[key];
-		});
-	}
-
-	private getStyles() {
+	private getStyles = () => {
 		return {
 			...styles.list,
-			...this.state.style,
+			...this.props.style,
 		};
-	}
+	};
 
-	private async onRefresh() {
+	private onRefresh = async () => {
 		this.setState({ refreshing: true });
-		const entries = await Storage.loadEntries();
+		const entries = (await Storage.loadEntries()).reverse();
 		const needsUpdate = entries.some((v, i) => {
 			return Object.entries(v).some(([key, value]) => {
 				if (value !== this.state.entries[i]?.[key]) return true;
@@ -105,12 +46,22 @@ export default class ExpenseList extends React.Component<
 		if (needsUpdate || entries.length !== this.state.entries.length) {
 			this.setState({ refreshing: false, entries });
 		} else this.setState({ refreshing: false });
+	};
+
+	async componentDidMount() {
+		eventEmitter.addListener('listChanged', this.onRefresh);
+
+		this.setState({
+			entries: (await Storage.loadEntries()).reverse(),
+			refreshing: false,
+		});
+	}
+	componentWillUnmount() {
+		eventEmitter.removeListener('listChanged');
 	}
 
 	render() {
-		if (this.state.entries.length === 0 && this.state.refreshing) {
-			return <ActivityIndicator size="large" style={this.getStyles()} />;
-		}
+		console.log('renderList', JSON.stringify(this.state.entries));
 
 		const sections = mapDateToEntries(this.state.entries);
 		const data = Object.entries(sections).map(([section, { entries }]) => {

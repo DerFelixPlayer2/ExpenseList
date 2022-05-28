@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Pressable, Button } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 
 interface AddButtonProps {
 	style?: any;
@@ -38,8 +38,6 @@ export default class AddButton extends React.Component<
 
 const styles = StyleSheet.create({
 	container: {
-		//		backgroundColor: 'green',
-
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',

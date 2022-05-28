@@ -1,16 +1,15 @@
 import { IEntry } from "./types";
 import { MMKVLoader } from "react-native-mmkv-storage";
-import { EventEmitter } from "eventemitter3";
+import { eventEmitter } from "./Globals";
 
 export default class Storage {
     private static storage = new MMKVLoader().initialize();
     private static key = 'entries';
 
-    static EE = new EventEmitter();
-
     static async loadEntries() {
-        const entries = this.storage.getArrayAsync<IEntry>(this.key);
-        return await entries || [];
+        const entries = await this.storage.getArrayAsync<IEntry>(this.key);
+        console.log('loadingEntries', entries)
+        return entries || [];
     }
 
     static async getSum() {
@@ -26,13 +25,15 @@ export default class Storage {
     private static async _saveEntry(entry: IEntry) {
         const entries = await this.loadEntries();
         const r = await this.storage.setArrayAsync(this.key, [...entries, entry]);
-        this.EE.emit('listChanged');
+        console.log('listChanged', JSON.stringify(entries, null, 2), entry)
+        eventEmitter.emit('listChanged');
         return r || false;
     }
 
     static async purgeEntries() {
         const r = this.storage.removeItem(this.key);
-        this.EE.emit('listChanged');
+        console.log("purge")
+        eventEmitter.emit('listChanged');
         return r || false;
     }
 
@@ -55,7 +56,8 @@ export default class Storage {
         _newEntry.edits.push(new Date().valueOf());
 
         const r = await this.storage.setArrayAsync(this.key, entries.map(entry => entry.id === id ? _newEntry : entry))
-        this.EE.emit('listChanged');
+        console.log("update")
+        eventEmitter.emit('listChanged');
         return r || false;
     }
 }
