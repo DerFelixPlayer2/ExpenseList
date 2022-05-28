@@ -56,8 +56,9 @@ export default class ExpenseList extends React.Component<
 			refreshing: false,
 		});
 	}
+
 	componentWillUnmount() {
-		eventEmitter.removeListener('listChanged');
+		eventEmitter.removeListener('listChanged', this.onRefresh);
 	}
 
 	render() {

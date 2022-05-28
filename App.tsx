@@ -32,7 +32,7 @@ interface AppState {
  * FIX:
  * - only first and last entry updating
  * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
- * - Sum not updating when it should
+ * - List not updating on refresh
  *
  */
 

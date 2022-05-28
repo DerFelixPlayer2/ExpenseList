@@ -27,16 +27,20 @@ export default class EditableText extends React.PureComponent<
 					? props.children.join('')
 					: props.children,
 		};
-
-		this.onDone = this.onDone.bind(this);
 	}
 
-	private onDone() {
+	private onDone = () => {
 		if (this.props.onDone) {
 			this.props.onDone(this.state.value);
 		}
 		this.setState({ editing: false });
-	}
+	};
+
+	private onBackgroundClick = () => {
+		if (this.state.editing) {
+			this.onDone();
+		}
+	};
 
 	componentDidUpdate(prevProps: EditableTextProps) {
 		if (prevProps.children !== this.props.children) {
@@ -50,16 +54,11 @@ export default class EditableText extends React.PureComponent<
 	}
 
 	componentDidMount() {
-		eventEmitter.on('backgroundClicked', () => {
-			// should always be true
-			if (this.state.editing) {
-				this.onDone();
-			}
-		});
+		eventEmitter.on('backgroundClicked', this.onBackgroundClick);
 	}
 
 	componentWillUnmount() {
-		eventEmitter.removeListener('backgroundClicked');
+		eventEmitter.removeListener('backgroundClicked', this.onBackgroundClick);
 	}
 
 	render() {
