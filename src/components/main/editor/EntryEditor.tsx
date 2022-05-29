@@ -1,9 +1,17 @@
 import React from 'react';
-import { Text, StyleSheet, Pressable, View } from 'react-native';
+import {
+	Text,
+	StyleSheet,
+	Pressable,
+	View,
+	Image,
+	ActivityIndicator,
+} from 'react-native';
 import EditableText from './EditableText';
 import Storage from '../../../Storage';
 import { IEntry } from '../../../types';
 import { eventEmitter } from '../../../Globals';
+import DeleteModal from './DeleteModal';
 
 interface EntryEditorProps {
 	style?: any;
@@ -13,6 +21,8 @@ interface EntryEditorProps {
 interface EntryEditorState {
 	name: string;
 	price: string;
+	deleteModalVisible: boolean;
+	spinnerVisible: boolean;
 }
 
 export default class EntryEditor extends React.Component<
@@ -24,6 +34,8 @@ export default class EntryEditor extends React.Component<
 		this.state = {
 			name: props.entry.name || '',
 			price: props.entry.price?.toFixed(2) || '0.00',
+			deleteModalVisible: false,
+			spinnerVisible: false,
 		};
 	}
 
@@ -34,10 +46,31 @@ export default class EntryEditor extends React.Component<
 		});
 	};
 
+	private deleteEntry = async () => {
+		this.setState({ deleteModalVisible: false, spinnerVisible: true });
+		await Storage.deleteEntry(this.props.entry.id);
+		eventEmitter.emit('entryDeleted');
+	};
+
+	private getStyles = () => {
+		if (this.state.deleteModalVisible) {
+			return {
+				...this.props.style,
+				...styles.container,
+				opacity: 0.7,
+			};
+		} else {
+			return {
+				...this.props.style,
+				...styles.container,
+			};
+		}
+	};
+
 	render() {
 		return (
 			<Pressable
-				style={{ ...this.props.style, ...styles.container }}
+				style={this.getStyles}
 				onPress={() => {
 					eventEmitter.emit('backgroundClicked');
 				}}>
@@ -79,6 +112,22 @@ export default class EntryEditor extends React.Component<
 						</EditableText>
 					</View>
 				</>
+				<>
+					{this.state.spinnerVisible && <ActivityIndicator size="large" />}
+					<Pressable
+						style={styles.delete_icon}
+						onPress={() => this.setState({ deleteModalVisible: true })}>
+						<Image
+							source={require('../../../../assets/delete.png')}
+							fadeDuration={0}
+						/>
+					</Pressable>
+					<DeleteModal
+						isVisible={this.state.deleteModalVisible}
+						onCancel={() => this.setState({ deleteModalVisible: false })}
+						onConfirm={this.deleteEntry}
+					/>
+				</>
 			</Pressable>
 		);
 	}
@@ -105,5 +154,16 @@ const styles = StyleSheet.create({
 	price_wrapper: {
 		display: 'flex',
 		flexDirection: 'row',
+	},
+	delete_icon: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+
+		padding: 15,
+
+		position: 'absolute',
+		bottom: 10,
+		right: 10,
 	},
 });

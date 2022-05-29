@@ -12,6 +12,7 @@ import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
 import PopUp from './src/components/main/PopUp';
 import EntryEditor from './src/components/main/editor/EntryEditor';
+import { eventEmitter } from './src/Globals';
 
 interface AppProps {
 	[key: string]: any;
@@ -27,11 +28,11 @@ interface AppState {
  *   - Shortcuts
  * - Entry editor / detailed view
  * 	- Make different design for income and expense
- * 		- make entries deletable
  * - Search bar
  *
  * FIX:
  * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
+ * - entries randomly duplicating (????)
  *
  */
 
@@ -43,18 +44,26 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 		this.state = { popupVisible: false, entryEditor: null };
 	}
 
+	private onBackPress = () => {
+		if (this.state.entryEditor !== null) {
+			this.setState({ entryEditor: null });
+			return true;
+		}
+		return false;
+	};
+
 	componentDidMount() {
-		this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-			if (this.state.entryEditor !== null) {
-				this.setState({ entryEditor: null });
-				return true;
-			}
-			return false;
-		});
+		this.backHandler = BackHandler.addEventListener(
+			'hardwareBackPress',
+			this.onBackPress
+		);
+
+		eventEmitter.addListener('entryDeleted', this.onBackPress);
 	}
 
 	componentWillUnmount() {
 		this.backHandler?.remove();
+		eventEmitter.removeListener('entryDeleted', this.onBackPress);
 	}
 
 	render() {
@@ -96,6 +105,8 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 
 const styles = StyleSheet.create({
 	window: {
+		backgroundColor: 'black',
+
 		height: '100%',
 		width: '100%',
 	},

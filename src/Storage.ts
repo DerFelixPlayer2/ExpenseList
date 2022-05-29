@@ -34,6 +34,13 @@ export default class Storage {
         return r || false;
     }
 
+    static async deleteEntry(id: number) {
+        const entries = await this.loadEntries();
+        const r = await this.storage.setArrayAsync(this.key, entries.filter(entry => entry.id !== id));
+        eventEmitter.emit('listChanged');
+        return r || false;
+    }
+
     static async updateOrCreate(id: number, { name, price }: { name: string, price: number }) {
         const entries = await this.loadEntries();
         const entry = entries.find(entry => entry.id === id);
