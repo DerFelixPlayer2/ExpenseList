@@ -19,9 +19,10 @@ interface EditableTextProps {
 interface EditableTextState {
 	editing: boolean;
 	value: string;
+	needsUpdate: boolean;
 }
 
-export default class EditableText extends React.PureComponent<
+export default class EditableText extends React.Component<
 	EditableTextProps,
 	EditableTextState
 > {
@@ -29,6 +30,7 @@ export default class EditableText extends React.PureComponent<
 		super(props);
 		this.state = {
 			editing: false,
+			needsUpdate: false,
 			value:
 				props.children instanceof Array
 					? props.children.join('')
@@ -40,7 +42,7 @@ export default class EditableText extends React.PureComponent<
 		if (this.props.onDone) {
 			this.props.onDone(this.state.value);
 		}
-		this.setState({ editing: false });
+		this.setState({ editing: false, needsUpdate: true });
 	};
 
 	private onBackgroundClick = () => {
@@ -49,15 +51,23 @@ export default class EditableText extends React.PureComponent<
 		}
 	};
 
-	componentDidUpdate(prevProps: EditableTextProps) {
-		if (prevProps.children !== this.props.children) {
+	componentDidUpdate() {
+		if (this.state.needsUpdate) {
 			this.setState({
+				needsUpdate: false,
 				value:
 					this.props.children instanceof Array
 						? this.props.children.join('')
 						: this.props.children,
 			});
 		}
+	}
+
+	shouldComponentUpdate(_: EditableTextProps, nextState: EditableTextState) {
+		return (
+			this.state.editing !== nextState.editing ||
+			this.state.value !== nextState.value
+		);
 	}
 
 	componentDidMount() {

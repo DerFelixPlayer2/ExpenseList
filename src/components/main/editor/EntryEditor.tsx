@@ -68,6 +68,8 @@ export default class EntryEditor extends React.Component<
 	};
 
 	render() {
+		console.log('render p', this.state.price);
+
 		return (
 			<Pressable
 				style={this.getStyles}
@@ -98,17 +100,18 @@ export default class EntryEditor extends React.Component<
 						<EditableText
 							style={styles.text_primary}
 							keyboardType="numeric"
+							key={this.state.price}
 							onDone={(v) => {
 								this.setState(
 									{
-										price: parseFloat(v).toFixed(2),
+										price:
+											(this.state.price.charAt(0) === '-' ? '-' : '') +
+											Math.abs(parseFloat(v)).toFixed(2),
 									},
 									this.saveToStorage
 								);
 							}}>
-							{this.state.price.charAt(0) === '-'
-								? this.state.price.substring(1)
-								: this.state.price}
+							{Math.abs(parseFloat(this.state.price)).toFixed(2)}
 						</EditableText>
 					</View>
 				</>

@@ -63,10 +63,9 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 					<Text
 						style={{
 							...styles.text_main,
-							color: this.props.price > 0 ? '#0a9553' : 'white',
+							color: this.props.price < 0 ? '#0ab553' : 'white',
 						}}>
-						{this.props.price < 0 ? '-' : ''}€{' '}
-						{Math.abs(this.props.price).toFixed(2)}
+						€ {Math.abs(this.props.price).toFixed(2)}
 					</Text>
 				</View>
 				<View>
