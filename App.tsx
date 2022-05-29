@@ -27,8 +27,7 @@ interface AppState {
  *   - Shortcuts
  * - Entry editor / detailed view
  * 	- Make different design for income and expense
- *  - Make it more clear that entries are editable (edit svg)
- * 		- same for delete
+ * 		- make entries deletable
  * - Search bar
  *
  * FIX:

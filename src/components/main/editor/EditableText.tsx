@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, TextInput, Text } from 'react-native';
+import {
+	View,
+	TextInput,
+	Text,
+	Image,
+	StyleSheet,
+	Pressable,
+} from 'react-native';
 import { eventEmitter } from '../../../Globals';
 
 interface EditableTextProps {
@@ -77,15 +84,32 @@ export default class EditableText extends React.PureComponent<
 						onBlur={this.onDone}
 					/>
 				) : (
-					<Text
-						style={this.props.style}
+					<Pressable
+						style={styles.container}
 						onPress={() => {
 							this.setState({ editing: true });
 						}}>
-						{this.state.value}
-					</Text>
+						<Text style={this.props.style}>{this.state.value}</Text>
+						<Image
+							source={require('../../../../assets/edit.png')}
+							fadeDuration={0}
+							style={styles.edit_icon}
+						/>
+					</Pressable>
 				)}
 			</View>
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	container: {
+		display: 'flex',
+		flexDirection: 'row',
+	},
+	edit_icon: {
+		position: 'relative',
+		top: 5,
+		left: 5,
+	},
+});

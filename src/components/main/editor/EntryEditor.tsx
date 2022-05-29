@@ -25,16 +25,14 @@ export default class EntryEditor extends React.Component<
 			name: props.entry.name || '',
 			price: props.entry.price?.toFixed(2) || '0.00',
 		};
-
-		this.saveToStorage = this.saveToStorage.bind(this);
 	}
 
-	private async saveToStorage() {
+	private saveToStorage = async () => {
 		await Storage.updateOrCreate(this.props.entry.id, {
 			name: this.state.name,
 			price: parseFloat(this.state.price),
 		});
-	}
+	};
 
 	render() {
 		return (
