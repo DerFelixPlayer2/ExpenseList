@@ -33,7 +33,6 @@ interface AppState {
  *
  * FIX:
  * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
- * - entries randomly duplicating (????)
  *
  * NOTE:
  * - EditableText may cause problems in the furture due the way updates are handled (state.needsUpdate)

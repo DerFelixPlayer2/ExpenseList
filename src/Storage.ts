@@ -17,7 +17,7 @@ export default class Storage {
     }
 
     static async saveEntry(name: string, price: number, timestamp?: number, id?: number) {
-        const entry = { name, price, timestamp: timestamp || new Date().valueOf(), id: id || (await this.loadEntries()).length };
+        const entry = { name, price, timestamp: timestamp || new Date().valueOf(), id: id || await this.generateId() };
         return await this._saveEntry(entry);
     }
 
@@ -62,5 +62,11 @@ export default class Storage {
         const r = await this.storage.setArrayAsync(this.key, entries.map(entry => entry.id === id ? _newEntry : entry))
         eventEmitter.emit('listChanged');
         return r || false;
+    }
+
+    private static async generateId() {
+        const nextId = (await this.storage.getIntAsync('id') || 0) + 1;
+        await this.storage.setIntAsync('id', nextId);
+        return nextId;
     }
 }
