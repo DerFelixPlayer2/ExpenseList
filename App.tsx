@@ -5,6 +5,8 @@ import {
 	StyleSheet,
 	View,
 	BackHandler,
+	AppState as ReactAppState,
+	AppStateStatus as ReactAppStateStatus,
 } from 'react-native';
 import { IEntry } from './src/types';
 import Storage from './src/Storage';
@@ -21,6 +23,7 @@ interface AppProps {
 interface AppState {
 	popupVisible: boolean;
 	entryEditor: IEntry | null;
+	appState: ReactAppStateStatus;
 }
 
 /**
@@ -41,10 +44,15 @@ interface AppState {
 
 export default class App extends React.PureComponent<AppProps, AppState> {
 	private backHandler?: NativeEventSubscription;
+	private appStateHandler?: NativeEventSubscription;
 
 	constructor(props: AppProps) {
 		super(props);
-		this.state = { popupVisible: false, entryEditor: null };
+		this.state = {
+			popupVisible: false,
+			entryEditor: null,
+			appState: ReactAppState.currentState,
+		};
 	}
 
 	private onBackPress = () => {
@@ -55,10 +63,21 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 		return false;
 	};
 
+	private onAppStateChange = (state: ReactAppStateStatus) => {
+		if (this.state.appState !== state) {
+			eventEmitter.emit('updateEntries');
+		}
+		this.setState({ appState: state });
+	};
+
 	componentDidMount() {
 		this.backHandler = BackHandler.addEventListener(
 			'hardwareBackPress',
 			this.onBackPress
+		);
+		this.appStateHandler = ReactAppState.addEventListener(
+			'change',
+			this.onAppStateChange
 		);
 
 		eventEmitter.addListener('entryDeleted', this.onBackPress);
@@ -66,6 +85,7 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 
 	componentWillUnmount() {
 		this.backHandler?.remove();
+		this.appStateHandler?.remove();
 		eventEmitter.removeListener('entryDeleted', this.onBackPress);
 	}
 

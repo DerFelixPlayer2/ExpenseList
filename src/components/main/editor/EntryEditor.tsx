@@ -68,8 +68,6 @@ export default class EntryEditor extends React.Component<
 	};
 
 	render() {
-		console.log('render p', this.state.price);
-
 		return (
 			<Pressable
 				style={this.getStyles}
