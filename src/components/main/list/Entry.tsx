@@ -39,7 +39,7 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 		} else if (diff < 172800) {
 			return 'Gestern';
 		} else {
-			return `${date.getDay()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+			return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 		}
 	}
 
