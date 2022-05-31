@@ -30,12 +30,11 @@ interface AppState {
  * TODO:
  * - Rework add entry menu (PopUp)
  *   - Shortcuts
- * - Entry editor / detailed view
- * 	- Make different design for income and expense
  * - Search bar
  *
  * FIX:
  * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
+ * - Fix another duplicate id bug
  *
  * NOTE:
  * - EditableText may cause problems in the furture due the way updates are handled (state.needsUpdate)

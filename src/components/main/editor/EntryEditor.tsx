@@ -92,7 +92,9 @@ export default class EntryEditor extends React.Component<
 					</EditableText>
 				</>
 				<>
-					<Text style={styles.text_secondary}>Preis:</Text>
+					<Text style={styles.text_secondary}>
+						{parseFloat(this.state.price) < 0 ? 'Einnahme:' : 'Ausgabe:'}
+					</Text>
 					<View style={styles.price_wrapper}>
 						<Text style={styles.text_primary}>€ </Text>
 						<EditableText
