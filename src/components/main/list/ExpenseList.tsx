@@ -21,7 +21,7 @@ export default class ExpenseList extends React.Component<
 	ExpenseListProps,
 	ExpenseListState
 > {
-	state = {
+	state: ExpenseListState = {
 		entries: [],
 		refreshing: true,
 	};
@@ -75,6 +75,10 @@ export default class ExpenseList extends React.Component<
 				data: entries,
 			};
 		});
+
+		console.log('first');
+		this.state.entries.forEach((e) => console.log(e.id));
+		console.log('second');
 
 		return (
 			<View style={this.getStyles()}>

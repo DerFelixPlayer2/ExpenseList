@@ -1,13 +1,17 @@
 import { IEntry } from "./types";
-import { MMKVLoader } from "react-native-mmkv-storage";
+import { MMKV } from 'react-native-mmkv';
 import { eventEmitter } from "./Globals";
 
 export default class Storage {
-    private static storage = new MMKVLoader().initialize();
+    private static storage = new MMKV();
     private static key = 'entries';
+    private static idKey = 'id';
+
 
     static async loadEntries() {
-        const entries = await this.storage.getArrayAsync<IEntry>(this.key);
+        const s = this.storage.getString(this.key)
+        if (!s) return [];
+        const entries: IEntry[] = JSON.parse(s);
         return entries || [];
     }
 
@@ -23,22 +27,20 @@ export default class Storage {
 
     private static async _saveEntry(entry: IEntry) {
         const entries = await this.loadEntries();
-        const r = await this.storage.setArrayAsync(this.key, [...entries, entry]);
+        this.storage.set(this.key, JSON.stringify([...entries, entry]));
         eventEmitter.emit('listChanged');
-        return r || false;
     }
 
     static async purgeEntries() {
-        const r = this.storage.removeItem(this.key);
+        this.storage.delete(this.key);
+        this.storage.set(this.idKey, 0);
         eventEmitter.emit('listChanged');
-        return r || false;
     }
 
     static async deleteEntry(id: number) {
         const entries = await this.loadEntries();
-        const r = await this.storage.setArrayAsync(this.key, entries.filter(entry => entry.id !== id));
+        this.storage.set(this.key, JSON.stringify(entries.filter(entry => entry.id !== id)));
         eventEmitter.emit('listChanged');
-        return r || false;
     }
 
     static async updateOrCreate(id: number, { name, price }: { name: string, price: number }) {
@@ -59,14 +61,14 @@ export default class Storage {
         if (!_newEntry.edits) _newEntry.edits = []
         _newEntry.edits.push(new Date().valueOf());
 
-        const r = await this.storage.setArrayAsync(this.key, entries.map(entry => entry.id === id ? _newEntry : entry))
+        this.storage.set(this.key, JSON.stringify(entries.map(entry => entry.id === id ? _newEntry : entry)))
         eventEmitter.emit('listChanged');
-        return r || false;
     }
 
     private static async generateId() {
-        const nextId = (await this.storage.getIntAsync('id') || 0) + 1;
-        await this.storage.setIntAsync('id', nextId);
+        const nextId = (this.storage.getNumber(this.idKey) || 0) + 1;
+        console.log("nextId", nextId)
+        this.storage.set(this.idKey, nextId);
         return nextId;
     }
 }
