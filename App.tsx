@@ -12,7 +12,7 @@ import { IEntry } from './src/types';
 import Storage from './src/Storage';
 import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
-import PopUp from './src/components/main/PopUp';
+import PopUp from './src/components/main/list/PopUp';
 import EntryEditor from './src/components/main/editor/EntryEditor';
 import { eventEmitter } from './src/Globals';
 
@@ -21,20 +21,22 @@ interface AppProps {
 }
 
 interface AppState {
-	popupVisible: boolean;
 	entryEditor: IEntry | null;
 	appState: ReactAppStateStatus;
 }
 
 /**
  * TODO:
- * - Rework add entry menu (PopUp)
- *   - Shortcuts
+ * - Make entries persist after reinstall of the app
+ * - Make autocompletion dropdown not suck
+ *
+ * OPTIONAL:
  * - Search bar
  *
  * FIX:
- * - Fix wonky behavior when adding new entry (using values of last created element when no value is provided)
- * - Fix another duplicate id bug
+ * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
+ *
+ * REQUEST:
  *
  * NOTE:
  * - EditableText may cause problems in the furture due the way updates are handled (state.needsUpdate)
@@ -48,7 +50,6 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 	constructor(props: AppProps) {
 		super(props);
 		this.state = {
-			popupVisible: false,
 			entryEditor: null,
 			appState: ReactAppState.currentState,
 		};
@@ -92,12 +93,7 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 		return (
 			<View style={styles.window}>
 				<View style={styles.container}>
-					<TopNav
-						style={styles.top}
-						onAddButtonPress={() => {
-							this.setState({ popupVisible: true });
-						}}
-					/>
+					<TopNav style={styles.top} />
 					{this.state.entryEditor !== null ? (
 						<EntryEditor entry={this.state.entryEditor} style={styles.editor} />
 					) : (
@@ -109,16 +105,6 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 						/>
 					)}
 				</View>
-				<PopUp
-					isVisible={this.state.popupVisible}
-					onRequestClose={() => this.setState({ popupVisible: false })}
-					callback={async (canceled, data) => {
-						if (!canceled && data) {
-							await Storage.saveEntry(data.name, data.price);
-						}
-						this.setState({ popupVisible: false });
-					}}
-				/>
 				<StatusBar style="auto" />
 			</View>
 		);

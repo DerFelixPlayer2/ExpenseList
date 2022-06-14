@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
+import { eventEmitter } from '../../Globals';
 
 interface AddButtonProps {
 	style?: any;
-	onPress: () => void;
 }
 
 interface AddButtonState {}
@@ -12,22 +12,20 @@ export default class AddButton extends React.Component<
 	AddButtonProps,
 	AddButtonState
 > {
-	constructor(props: AddButtonProps) {
-		super(props);
-
-		this.getStyles = this.getStyles.bind(this);
-	}
-
-	private getStyles() {
+	private getStyles = () => {
 		return {
 			...styles.container,
 			...this.props.style,
 		};
-	}
+	};
+
+	private onPress = () => {
+		eventEmitter.emit('addButtonPressed');
+	};
 
 	render() {
 		return (
-			<Pressable style={this.getStyles()} onPress={this.props.onPress}>
+			<Pressable style={this.getStyles()} onPress={this.onPress}>
 				<View style={styles.inner_v1} />
 				<View style={styles.inner_h} />
 				<View style={styles.inner_v2} />

@@ -12,6 +12,7 @@ interface EntryProps {
 
 interface EntryState {
 	ago: string;
+	popupOpen: boolean;
 }
 
 export default class Entry extends React.Component<EntryProps, EntryState> {
@@ -20,6 +21,7 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 
 		this.state = {
 			ago: Entry.getAgo(this.props.timestamp),
+			popupOpen: false,
 		};
 	}
 
@@ -43,19 +45,54 @@ export default class Entry extends React.Component<EntryProps, EntryState> {
 		}
 	}
 
-	componentDidMount() {
-		eventEmitter.addListener('updateEntries', () => {
-			this.setState({
-				ago: Entry.getAgo(this.props.timestamp),
-			});
+	private getStyles = () => {
+		if (this.state.popupOpen) {
+			return {
+				...this.props.style,
+				...styles.container,
+				opacity: 0.7,
+			};
+		} else {
+			return {
+				...this.props.style,
+				...styles.container,
+			};
+		}
+	};
+
+	private popupOpen = () => {
+		this.setState({
+			popupOpen: true,
 		});
+	};
+
+	private popupClose = () => {
+		this.setState({
+			popupOpen: false,
+		});
+	};
+
+	private onUpdate = () => {
+		this.setState({
+			ago: Entry.getAgo(this.props.timestamp),
+		});
+	};
+
+	componentDidMount() {
+		eventEmitter.addListener('updateEntries', this.onUpdate);
+		eventEmitter.addListener('onPopupOpen', this.popupOpen);
+		eventEmitter.addListener('onPopupClose', this.popupClose);
+	}
+
+	componentWillUnmount() {
+		eventEmitter.removeListener('updateEntries', this.onUpdate);
+		eventEmitter.removeListener('onPopupOpen', this.popupOpen);
+		eventEmitter.removeListener('onPopupClose', this.popupClose);
 	}
 
 	render() {
 		return (
-			<Pressable
-				style={{ ...styles.container, ...this.props.style }}
-				onPress={this.props.onPress}>
+			<Pressable style={() => this.getStyles()} onPress={this.props.onPress}>
 				<View style={styles.top_wrap}>
 					<Text style={{ ...styles.text_main, ...styles.name }}>
 						{this.props.name}

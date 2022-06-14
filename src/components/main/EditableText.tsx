@@ -7,7 +7,7 @@ import {
 	StyleSheet,
 	Pressable,
 } from 'react-native';
-import { eventEmitter } from '../../../Globals';
+import { eventEmitter } from '../../Globals';
 
 interface EditableTextProps {
 	style?: any;
@@ -101,7 +101,7 @@ export default class EditableText extends React.Component<
 						}}>
 						<Text style={this.props.style}>{this.state.value}</Text>
 						<Image
-							source={require('../../../../assets/edit.png')}
+							source={require('../../../assets/edit.png')}
 							fadeDuration={0}
 							style={styles.edit_icon}
 						/>

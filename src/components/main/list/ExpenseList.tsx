@@ -3,16 +3,17 @@ import { StyleSheet, SectionList, View, Text } from 'react-native';
 import { IEntry } from '../../../types';
 import Storage from '../../../Storage';
 import { eventEmitter } from '../../../Globals';
+import PopUp from './PopUp';
 import Entry from './Entry';
 import SectionHeader from './SectionHeader';
 
 interface ExpenseListProps {
-	[key: string]: any;
 	style?: any;
 	onPress: (entry: IEntry) => void;
 }
 
 interface ExpenseListState {
+	popupOpen: boolean;
 	entries: IEntry[];
 	refreshing: boolean;
 }
@@ -24,13 +25,22 @@ export default class ExpenseList extends React.Component<
 	state: ExpenseListState = {
 		entries: [],
 		refreshing: true,
+		popupOpen: false,
 	};
 
 	private getStyles = () => {
-		return {
-			...styles.list,
-			...this.props.style,
-		};
+		if (this.state.popupOpen) {
+			return {
+				...this.props.style,
+				...styles.list,
+				opacity: 0.7,
+			};
+		} else {
+			return {
+				...this.props.style,
+				...styles.list,
+			};
+		}
 	};
 
 	private onRefresh = async () => {
@@ -53,8 +63,18 @@ export default class ExpenseList extends React.Component<
 			);
 	};
 
+	private popupOpen = () => {
+		this.setState({ popupOpen: true });
+	};
+
+	private popupClose = () => {
+		this.setState({ popupOpen: false });
+	};
+
 	async componentDidMount() {
 		eventEmitter.addListener('listChanged', this.onRefresh);
+		eventEmitter.addListener('onPopupOpen', this.popupOpen);
+		eventEmitter.addListener('onPopupClose', this.popupClose);
 
 		this.setState({
 			entries: (await Storage.loadEntries()).reverse(),
@@ -64,7 +84,8 @@ export default class ExpenseList extends React.Component<
 
 	componentWillUnmount() {
 		eventEmitter.removeListener('listChanged', this.onRefresh);
-		eventEmitter.removeListener('updateEntries');
+		eventEmitter.removeListener('onPopupOpen', this.popupOpen);
+		eventEmitter.removeListener('onPopupClose', this.popupClose);
 	}
 
 	render() {
@@ -76,13 +97,10 @@ export default class ExpenseList extends React.Component<
 			};
 		});
 
-		console.log('first');
-		this.state.entries.forEach((e) => console.log(e.id));
-		console.log('second');
-
 		return (
-			<View style={this.getStyles()}>
+			<>
 				<SectionList
+					style={this.getStyles()}
 					sections={data}
 					initialNumToRender={10}
 					stickySectionHeadersEnabled={true}
@@ -96,7 +114,8 @@ export default class ExpenseList extends React.Component<
 					renderItem={({ item }) => createEntry(item, this.props.onPress)}
 					renderSectionHeader={({ section }) => createSectionHeader(section)}
 				/>
-			</View>
+				<PopUp />
+			</>
 		);
 	}
 }

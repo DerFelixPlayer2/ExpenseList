@@ -67,7 +67,6 @@ export default class Storage {
 
     private static async generateId() {
         const nextId = (this.storage.getNumber(this.idKey) || 0) + 1;
-        console.log("nextId", nextId)
         this.storage.set(this.idKey, nextId);
         return nextId;
     }

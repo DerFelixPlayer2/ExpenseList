@@ -7,7 +7,7 @@ import {
 	Image,
 	ActivityIndicator,
 } from 'react-native';
-import EditableText from './EditableText';
+import EditableText from '../EditableText';
 import Storage from '../../../Storage';
 import { IEntry } from '../../../types';
 import { eventEmitter } from '../../../Globals';
