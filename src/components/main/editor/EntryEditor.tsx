@@ -6,6 +6,7 @@ import {
 	View,
 	Image,
 	ActivityIndicator,
+	TouchableOpacity,
 } from 'react-native';
 import EditableText from '../EditableText';
 import Storage from '../../../Storage';
@@ -114,14 +115,15 @@ export default class EntryEditor extends React.Component<
 				</>
 				<>
 					{this.state.spinnerVisible && <ActivityIndicator size="large" />}
-					<Pressable
+					<TouchableOpacity
 						style={styles.delete_icon}
+						activeOpacity={0.3}
 						onPress={() => this.setState({ deleteModalVisible: true })}>
 						<Image
 							source={require('../../../../assets/delete.png')}
 							fadeDuration={0}
 						/>
-					</Pressable>
+					</TouchableOpacity>
 					<DeleteModal
 						isVisible={this.state.deleteModalVisible}
 						onCancel={() => this.setState({ deleteModalVisible: false })}
