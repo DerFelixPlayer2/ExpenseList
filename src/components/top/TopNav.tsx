@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { eventEmitter } from '../../Globals';
 import AddButton from './AddButton';
 import SumDisplay from './SumDisplay';
 
@@ -7,9 +8,15 @@ interface TopNavProps {
 	style?: any;
 }
 
-interface TopNavState {}
+interface TopNavState {
+	isOnList: boolean;
+}
 
 export default class TopNav extends React.Component<TopNavProps, TopNavState> {
+	state = {
+		isOnList: true,
+	};
+
 	private getStyle = () => {
 		return {
 			...this.props.style,
@@ -17,12 +24,30 @@ export default class TopNav extends React.Component<TopNavProps, TopNavState> {
 		};
 	};
 
+	private onLeaveList = () => {
+		this.setState({ isOnList: false });
+	};
+
+	private onEntryList = () => {
+		this.setState({ isOnList: true });
+	};
+
+	componentDidMount() {
+		eventEmitter.addListener('leaveList', this.onLeaveList);
+		eventEmitter.addListener('entryList', this.onEntryList);
+	}
+
+	componentWillUnmount() {
+		eventEmitter.removeListener('leaveList', this.onLeaveList);
+		eventEmitter.removeListener('entryList', this.onEntryList);
+	}
+
 	render() {
 		return (
 			<View style={this.getStyle()}>
 				<Text style={styles.text}>Expense List</Text>
 				<SumDisplay />
-				<AddButton style={styles.btn} />
+				{this.state.isOnList && <AddButton style={styles.btn} />}
 			</View>
 		);
 	}

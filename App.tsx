@@ -9,10 +9,8 @@ import {
 	AppStateStatus as ReactAppStateStatus,
 } from 'react-native';
 import { IEntry } from './src/types';
-import Storage from './src/Storage';
 import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
-import PopUp from './src/components/main/list/PopUp';
 import EntryEditor from './src/components/main/editor/EntryEditor';
 import { eventEmitter } from './src/Globals';
 
@@ -27,7 +25,6 @@ interface AppState {
 
 /**
  * TODO:
- * - Make entries persist after reinstall of the app
  * - Make autocompletion dropdown not suck
  *
  * OPTIONAL:
@@ -35,11 +32,14 @@ interface AppState {
  *
  * FIX:
  * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
+ * - autocompletion dropdowns are not closable when clicking outside of them
+ * - autocompletion dropdowns have to be focused before they can be interacted with
+ * - Make entries persist after reinstall of the app
  *
  * REQUEST:
  *
  * NOTE:
- * - EditableText may cause problems in the furture due the way updates are handled (state.needsUpdate)
+ * - EditableText may cause problems in the furture due to the way updates are handled (state.needsUpdate)
  *
  */
 
@@ -58,6 +58,7 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 	private onBackPress = () => {
 		if (this.state.entryEditor !== null) {
 			this.setState({ entryEditor: null });
+			eventEmitter.emit('entryList');
 			return true;
 		}
 		return false;
@@ -101,6 +102,7 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 							style={styles.list}
 							onPress={(entry) => {
 								this.setState({ entryEditor: entry });
+								eventEmitter.emit('leaveList');
 							}}
 						/>
 					)}
