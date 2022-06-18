@@ -30,18 +30,14 @@ export default class AutoCompletionTextInput extends React.Component<
 	AutoCompletionTextInputProps,
 	AutoCompletionTextInputState
 > {
-	constructor(props: AutoCompletionTextInputProps) {
-		super(props);
-
-		this.state = {
-			value: '',
-			matchingHints: [],
-			shouldShowHints:
-				this.props.shouldShowHintsOnInitialRender ||
-				this.props.hintTrigger ||
-				false,
-		};
-	}
+	state = {
+		value: '',
+		matchingHints: [],
+		shouldShowHints:
+			this.props.shouldShowHintsOnInitialRender ||
+			this.props.hintTrigger ||
+			false,
+	};
 
 	private onChangeText = (value: string) => {
 		this.updateHints(value);

@@ -47,13 +47,10 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 	private backHandler?: NativeEventSubscription;
 	private appStateHandler?: NativeEventSubscription;
 
-	constructor(props: AppProps) {
-		super(props);
-		this.state = {
-			entryEditor: null,
-			appState: ReactAppState.currentState,
-		};
-	}
+	state = {
+		entryEditor: null,
+		appState: ReactAppState.currentState,
+	};
 
 	private onBackPress = () => {
 		if (this.state.entryEditor !== null) {

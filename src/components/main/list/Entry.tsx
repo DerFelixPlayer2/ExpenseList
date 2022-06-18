@@ -16,14 +16,10 @@ interface EntryState {
 }
 
 export default class Entry extends React.Component<EntryProps, EntryState> {
-	constructor(props: EntryProps) {
-		super(props);
-
-		this.state = {
-			ago: Entry.getAgo(this.props.timestamp),
-			popupOpen: false,
-		};
-	}
+	state = {
+		ago: Entry.getAgo(this.props.timestamp),
+		popupOpen: false,
+	};
 
 	private static getAgo(timestamp: number): string {
 		const date = new Date(timestamp);

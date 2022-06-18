@@ -26,17 +26,14 @@ export default class EditableText extends React.Component<
 	EditableTextProps,
 	EditableTextState
 > {
-	constructor(props: EditableTextProps) {
-		super(props);
-		this.state = {
-			editing: false,
-			needsUpdate: false,
-			value:
-				props.children instanceof Array
-					? props.children.join('')
-					: props.children,
-		};
-	}
+	state = {
+		editing: false,
+		needsUpdate: false,
+		value:
+			this.props.children instanceof Array
+				? this.props.children.join('')
+				: this.props.children,
+	};
 
 	private onDone = () => {
 		if (this.props.onDone) {

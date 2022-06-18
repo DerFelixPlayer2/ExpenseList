@@ -29,15 +29,12 @@ export default class EntryEditor extends React.Component<
 	EntryEditorProps,
 	EntryEditorState
 > {
-	constructor(props: EntryEditorProps) {
-		super(props);
-		this.state = {
-			name: props.entry.name || '',
-			price: props.entry.price?.toFixed(2) || '0.00',
-			deleteModalVisible: false,
-			spinnerVisible: false,
-		};
-	}
+	state = {
+		name: this.props.entry.name || '',
+		price: this.props.entry.price?.toFixed(2) || '0.00',
+		deleteModalVisible: false,
+		spinnerVisible: false,
+	};
 
 	private saveToStorage = async () => {
 		await Storage.updateOrCreate(this.props.entry.id, {

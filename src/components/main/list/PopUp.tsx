@@ -16,7 +16,6 @@ interface PopUpState {
 
 export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 	private: boolean = false;
-
 	state: PopUpState = {
 		name: '',
 		price: 0,
