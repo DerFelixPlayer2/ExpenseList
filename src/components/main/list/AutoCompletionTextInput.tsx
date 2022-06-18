@@ -52,7 +52,12 @@ export default class AutoCompletionTextInput extends React.Component<
 					hint.toLocaleLowerCase().includes(newValue.toLocaleLowerCase()) &&
 					hint.length > 0
 			)
-			.sort((a, b) => a.localeCompare(b));
+			.sort((a, b) => {
+				if (isNaN(parseFloat(a)) || isNaN(parseFloat(b))) {
+					return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+				}
+				return parseFloat(a) - parseFloat(b);
+			});
 		this.setState({ matchingHints });
 	};
 

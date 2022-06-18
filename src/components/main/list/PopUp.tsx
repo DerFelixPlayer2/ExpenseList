@@ -3,12 +3,14 @@ import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import Storage from '../../../Storage';
 import { eventEmitter } from '../../../Globals';
 import AutoCompletionTextInput from './AutoCompletionTextInput';
+import CheckBox from '@react-native-community/checkbox';
 
 interface PopUpProps {}
 
 interface PopUpState {
 	visible: boolean;
 	name: string;
+	isIncome: boolean;
 	price: number;
 	firstTextInputDone: boolean;
 	hints: { name: string[]; price: string[] };
@@ -19,6 +21,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 	state: PopUpState = {
 		name: '',
 		price: 0,
+		isIncome: false,
 		visible: false,
 		firstTextInputDone: false,
 		hints: { name: [], price: [] },
@@ -26,7 +29,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 
 	private onAddButtonClick = () => {
 		eventEmitter.emit('onPopupOpen');
-		this.setState({ visible: true });
+		this.setState({ visible: true, isIncome: false, name: '', price: 0 });
 	};
 
 	private onCancel = () => {
@@ -35,6 +38,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 	};
 
 	private onAdd = async () => {
+		const price = Math.abs(this.state.price);
 		this.setState({
 			visible: false,
 			firstTextInputDone: false,
@@ -42,13 +46,13 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 				name: this.state.hints.name.includes(this.state.name)
 					? this.state.hints.name
 					: [...this.state.hints.name, this.state.name],
-				price: this.state.hints.price.includes(this.state.price.toFixed(2))
+				price: this.state.hints.price.includes(price.toFixed(2))
 					? this.state.hints.price
-					: [...this.state.hints.price, this.state.price.toFixed(2)],
+					: [...this.state.hints.price, price.toFixed(2)],
 			},
 		});
 		eventEmitter.emit('onPopupClose');
-		Storage.saveEntry(this.state.name, this.state.price);
+		Storage.saveEntry(this.state.name, this.state.isIncome ? -price : price);
 	};
 
 	async componentDidMount() {
@@ -61,8 +65,8 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		const entries = await Storage.loadEntries();
 		entries.forEach((entry) => {
 			if (!filtered.name.includes(entry.name)) filtered.name.push(entry.name);
-			if (!filtered.price.includes(entry.price))
-				filtered.price.push(entry.price);
+			if (!filtered.price.includes(Math.abs(entry.price)))
+				filtered.price.push(Math.abs(entry.price));
 		});
 		this.setState({
 			hints: {
@@ -75,7 +79,8 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 	shouldComponentUpdate(_: PopUpProps, nextState: PopUpState) {
 		return (
 			this.state.visible !== nextState.visible ||
-			this.state.firstTextInputDone !== nextState.firstTextInputDone
+			this.state.firstTextInputDone !== nextState.firstTextInputDone ||
+			this.state.isIncome !== nextState.isIncome
 		);
 	}
 
@@ -121,6 +126,21 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 										onChangeText={(v) =>
 											this.setState({ price: parseFloat(v) })
 										}
+									/>
+								</View>
+								<View style={styles.checkbox_wrapper}>
+									<Text style={styles.text_primary}>Einnahme:</Text>
+									<CheckBox
+										style={styles.checkbox}
+										disabled={false}
+										value={this.state.isIncome}
+										tintColors={{
+											true: '#ffffffee',
+											false: '#ffffffdd',
+										}}
+										onValueChange={(isIncome: boolean) => {
+											this.setState({ isIncome });
+										}}
 									/>
 								</View>
 								<View style={styles.button_wrapper}>
@@ -198,5 +218,18 @@ const styles = StyleSheet.create({
 		color: 'white',
 		fontSize: 15,
 		fontWeight: 'bold',
+
+		marginRight: 10,
+	},
+	checkbox_wrapper: {
+		width: 200,
+
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+	},
+	checkbox: {
+		top: 1,
 	},
 });

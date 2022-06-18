@@ -26,9 +26,12 @@ interface AppState {
 /**
  * TODO:
  * - Make autocompletion dropdown not suck
+ * - Improve the way incomes are handled
+ *   - SumDisplay
  *
  * OPTIONAL:
  * - Search bar
+ * - Reduce time between clicking the add button and the popup showing up
  *
  * FIX:
  * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
@@ -37,6 +40,7 @@ interface AppState {
  * - Make entries persist after reinstall of the app
  *
  * REQUEST:
+ * - autocompletion dropdown should only contain prices that have existed for that name only
  *
  * NOTE:
  * - EditableText may cause problems in the furture due to the way updates are handled (state.needsUpdate)
