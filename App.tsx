@@ -25,6 +25,7 @@ interface AppState {
 
 /**
  * TODO:
+ * - Add new app icon and loading screen (splash)
  * - Make autocompletion dropdown not suck
  * - Improve the way incomes are handled
  *   - SumDisplay
@@ -34,10 +35,12 @@ interface AppState {
  * - Reduce time between clicking the add button and the popup showing up
  *
  * FIX:
- * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
  * - autocompletion dropdowns are not closable when clicking outside of them
  * - autocompletion dropdowns have to be focused before they can be interacted with
  * - Make entries persist after reinstall of the app
+ *
+ * CREATED WORKAROUND:
+ * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
  *
  * REQUEST:
  * - autocompletion dropdown should only contain prices that have existed for that name only

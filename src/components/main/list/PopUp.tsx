@@ -13,6 +13,7 @@ interface PopUpState {
 	isIncome: boolean;
 	price: number;
 	firstTextInputDone: boolean;
+	disableHints: boolean;
 	hints: { name: string[]; price: string[] };
 }
 
@@ -24,6 +25,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		isIncome: false,
 		visible: false,
 		firstTextInputDone: false,
+		disableHints: false,
 		hints: { name: [], price: [] },
 	};
 
@@ -38,6 +40,11 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 	};
 
 	private onAdd = async () => {
+		if (this.state.name === '' || this.state.price === 0) {
+			eventEmitter.emit('invalidPopupValues');
+			return;
+		}
+
 		const price = Math.abs(this.state.price);
 		this.setState({
 			visible: false,
@@ -80,7 +87,8 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		return (
 			this.state.visible !== nextState.visible ||
 			this.state.firstTextInputDone !== nextState.firstTextInputDone ||
-			this.state.isIncome !== nextState.isIncome
+			this.state.isIncome !== nextState.isIncome ||
+			this.state.disableHints !== nextState.disableHints
 		);
 	}
 
@@ -106,6 +114,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 										placeholder="Meal"
 										shouldShowHintsOnInitialRender={true}
 										keyboardType="default"
+										hintOverride={this.state.disableHints ? false : undefined}
 										onSubmit={() => {
 											this.setState({ firstTextInputDone: true });
 										}}
@@ -119,7 +128,11 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 										placeholder="12.3"
 										shouldShowHintsOnInitialRender={false}
 										keyboardType="numeric"
-										hintTrigger={this.state.firstTextInputDone}
+										hintOverride={
+											this.state.disableHints
+												? false
+												: this.state.firstTextInputDone || undefined
+										}
 										onSubmit={() => {
 											this.setState({ firstTextInputDone: false });
 										}}
@@ -220,6 +233,7 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 
 		marginRight: 10,
+		marginTop: 15,
 	},
 	checkbox_wrapper: {
 		width: 200,
@@ -228,8 +242,11 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
+
+		marginTop: 10,
+		marginBottom: 5,
 	},
 	checkbox: {
-		top: 1,
+		top: 8,
 	},
 });

@@ -7,7 +7,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
-import { IEntry } from '../../../types';
+import { eventEmitter } from '../../../Globals';
 
 interface AutoCompletionTextInputProps {
 	style?: any;
@@ -15,7 +15,7 @@ interface AutoCompletionTextInputProps {
 	shouldShowHintsOnInitialRender?: boolean;
 	onChangeText: (text: string) => void;
 	onSubmit?: () => void;
-	hintTrigger?: boolean;
+	hintOverride?: boolean | undefined;
 	keyboardType?: 'default' | 'numeric';
 	placeholder?: string;
 }
@@ -23,6 +23,7 @@ interface AutoCompletionTextInputProps {
 interface AutoCompletionTextInputState {
 	matchingHints: string[];
 	shouldShowHints: boolean;
+	errorMessage: string;
 	value: string;
 }
 
@@ -33,16 +34,17 @@ export default class AutoCompletionTextInput extends React.Component<
 	state = {
 		value: '',
 		matchingHints: [],
+		errorMessage: '',
 		shouldShowHints:
-			this.props.shouldShowHintsOnInitialRender ||
-			this.props.hintTrigger ||
-			false,
+			this.props.hintOverride === undefined
+				? this.props.shouldShowHintsOnInitialRender || false
+				: this.props.hintOverride,
 	};
 
 	private onChangeText = (value: string) => {
 		this.updateHints(value);
 		this.props.onChangeText(value);
-		this.setState({ value });
+		this.setState({ value, errorMessage: '' });
 	};
 
 	private updateHints = (newValue: string = '') => {
@@ -84,8 +86,26 @@ export default class AutoCompletionTextInput extends React.Component<
 		);
 	};
 
+	private onSubmitInvalidValues = () => {
+		this.setState({ shouldShowHints: false });
+		if (this.state.value.length === 0) {
+			this.setState({
+				errorMessage:
+					/*'Field cannot be empty'*/ 'Feld muss einen Wert enthalten',
+			});
+		}
+	};
+
 	componentDidMount() {
 		this.updateHints();
+		eventEmitter.addListener('invalidPopupValues', this.onSubmitInvalidValues);
+	}
+
+	componentWillUnmount() {
+		eventEmitter.removeListener(
+			'invalidPopupValues',
+			this.onSubmitInvalidValues
+		);
 	}
 
 	render() {
@@ -108,7 +128,9 @@ export default class AutoCompletionTextInput extends React.Component<
 						this.props.onSubmit && this.props.onSubmit();
 					}}
 				/>
-				{(this.state.shouldShowHints || this.props.hintTrigger) &&
+				{(this.props.hintOverride === undefined
+					? this.state.shouldShowHints
+					: this.props.hintOverride) &&
 					this.state.matchingHints.length !== 0 && (
 						<FlatList
 							style={styles.list}
@@ -117,6 +139,16 @@ export default class AutoCompletionTextInput extends React.Component<
 							})}
 							renderItem={({ item }) => this.renderItem(item)}
 						/>
+					)}
+				{!(this.props.hintOverride === undefined
+					? this.state.shouldShowHints
+					: this.props.hintOverride) &&
+					this.state.matchingHints.length !== 0 &&
+					this.state.errorMessage.length > 0 && (
+						<>
+							<View style={styles.error_placeholder} />
+							<Text style={styles.text_error}>{this.state.errorMessage}</Text>
+						</>
 					)}
 			</View>
 		);
@@ -130,7 +162,7 @@ const styles = StyleSheet.create({
 
 		width: 200,
 
-		marginBottom: 15,
+		//marginBottom: 15,
 		marginTop: 5,
 		paddingLeft: 10,
 		paddingRight: 10,
@@ -166,5 +198,17 @@ const styles = StyleSheet.create({
 	list_title: {
 		color: 'white',
 		fontSize: 15,
+	},
+	error_placeholder: {
+		marginBottom: 14,
+	},
+	text_error: {
+		color: '#ff4444ee',
+		fontSize: 13,
+		fontWeight: 'bold',
+
+		position: 'absolute',
+		top: 39,
+		left: 1,
 	},
 });
