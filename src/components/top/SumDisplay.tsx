@@ -16,13 +16,13 @@ export default class SumDisplay extends React.Component<
 	SumDisplayState
 > {
 	state = {
-		sum: 0,
+		sum: -1,
 	};
 
 	private getStyle = () => {
 		return {
-			...styles.text,
 			...this.props.style,
+			...styles.text,
 		};
 	};
 
@@ -42,7 +42,7 @@ export default class SumDisplay extends React.Component<
 	}
 
 	render() {
-		if (!this.state?.sum && this.state?.sum !== 0) {
+		if (this.state.sum < 0) {
 			return (
 				<View style={this.getStyle()}>
 					<ActivityIndicator />

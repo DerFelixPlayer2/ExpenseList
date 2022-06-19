@@ -59,7 +59,10 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 			},
 		});
 		eventEmitter.emit('onPopupClose');
-		(await Storage.getInstance()).saveEntry(this.state.name, this.state.isIncome ? -price : price);
+		(await Storage.getInstance()).saveEntry(
+			this.state.name,
+			this.state.isIncome ? -price : price
+		);
 	};
 
 	async componentDidMount() {
@@ -141,7 +144,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 										}
 									/>
 								</View>
-								<View style={styles.checkbox_wrapper}>
+								{/* <View style={styles.checkbox_wrapper}>
 									<Text style={styles.text_primary}>Einnahme:</Text>
 									<CheckBox
 										style={styles.checkbox}
@@ -155,7 +158,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 											this.setState({ isIncome });
 										}}
 									/>
-								</View>
+								</View> */}
 								<View style={styles.button_wrapper}>
 									<TouchableOpacity
 										onPress={this.onCancel}
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
 		paddingTop: 20,
 		paddingLeft: 20,
 		paddingRight: 20,
-		paddingBottom: 5,
+		paddingBottom: 10,
 		alignItems: 'center',
 
 		borderRadius: 12,
@@ -217,7 +220,7 @@ const styles = StyleSheet.create({
 	btn: {
 		width: 80,
 		padding: 12,
-		paddingTop: 20,
+		paddingTop: 40,
 
 		display: 'flex',
 		justifyContent: 'center',
@@ -233,7 +236,7 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 
 		marginRight: 10,
-		marginTop: 15,
+		marginTop: 25,
 	},
 	checkbox_wrapper: {
 		width: 200,
