@@ -28,7 +28,7 @@ export default class SumDisplay extends React.Component<
 
 	private onListChange = async () => {
 		this.setState({
-			sum: await Storage.getSum(),
+			sum: await (await Storage.getInstance()).getSum(),
 		});
 	};
 

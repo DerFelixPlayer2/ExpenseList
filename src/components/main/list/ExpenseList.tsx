@@ -45,7 +45,9 @@ export default class ExpenseList extends React.Component<
 
 	private onRefresh = async () => {
 		this.setState({ refreshing: true });
-		const entries = (await Storage.loadEntries()).reverse();
+		const entries = (
+			await (await Storage.getInstance()).loadEntries()
+		).reverse();
 		const needsUpdate = entries.some((v, i) => {
 			return Object.entries(v).some(([key, value]) => {
 				if (value !== this.state.entries[i]?.[key]) return true;
@@ -77,7 +79,7 @@ export default class ExpenseList extends React.Component<
 		eventEmitter.addListener('onPopupClose', this.popupClose);
 
 		this.setState({
-			entries: (await Storage.loadEntries()).reverse(),
+			entries: (await (await Storage.getInstance()).loadEntries()).reverse(),
 			refreshing: false,
 		});
 	}

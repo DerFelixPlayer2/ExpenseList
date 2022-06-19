@@ -37,10 +37,9 @@ interface AppState {
  * FIX:
  * - autocompletion dropdowns are not closable when clicking outside of them
  * - autocompletion dropdowns have to be focused before they can be interacted with
- * - Make entries persist after reinstall of the app
  *
- * CREATED WORKAROUND:
- * - Second autocompletion input dropdown is unscrollable if it reaches out of the model bb
+ * MIGHT BE FIXED, REQUIRES FURTHER TESTING:
+ * - Make entries persist after update of the app
  *
  * REQUEST:
  * - autocompletion dropdown should only contain prices that have existed for that name only

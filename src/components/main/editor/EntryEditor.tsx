@@ -38,7 +38,9 @@ export default class EntryEditor extends React.Component<
 	};
 
 	private saveToStorage = async () => {
-		await Storage.updateOrCreate(this.props.entry.id, {
+		await (
+			await Storage.getInstance()
+		).updateOrCreate(this.props.entry.id, {
 			name: this.state.name,
 			price: parseFloat(this.state.price),
 		});
@@ -46,7 +48,7 @@ export default class EntryEditor extends React.Component<
 
 	private deleteEntry = async () => {
 		this.setState({ deleteModalVisible: false, spinnerVisible: true });
-		await Storage.deleteEntry(this.props.entry.id);
+		await (await Storage.getInstance()).deleteEntry(this.props.entry.id);
 		eventEmitter.emit('entryDeleted');
 	};
 

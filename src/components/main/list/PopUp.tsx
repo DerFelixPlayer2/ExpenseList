@@ -59,7 +59,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 			},
 		});
 		eventEmitter.emit('onPopupClose');
-		Storage.saveEntry(this.state.name, this.state.isIncome ? -price : price);
+		(await Storage.getInstance()).saveEntry(this.state.name, this.state.isIncome ? -price : price);
 	};
 
 	async componentDidMount() {
@@ -69,7 +69,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 			name: [],
 			price: [],
 		};
-		const entries = await Storage.loadEntries();
+		const entries = await (await Storage.getInstance()).loadEntries();
 		entries.forEach((entry) => {
 			if (!filtered.name.includes(entry.name)) filtered.name.push(entry.name);
 			if (!filtered.price.includes(Math.abs(entry.price)))
