@@ -23,7 +23,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		name: '',
 		price: 0,
 		isIncome: false,
-		visible: true,
+		visible: false,
 		firstTextInputDone: false,
 		disableHints: false,
 		hints: { name: [], price: [] },
@@ -101,81 +101,77 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 
 	render() {
 		return (
-			<View>
-				<View style={styles.centeredView}>
-					<Modal
-						animationType="none"
-						transparent={true}
-						onRequestClose={this.onCancel}
-						visible={this.state.visible}>
-						<View style={styles.centeredView}>
-							<View style={styles.modalView}>
-								<View>
-									<Text style={styles.text_primary}>Name: </Text>
-									<AutoCompletionTextInput
-										hints={this.state.hints.name}
-										placeholder="Meal"
-										shouldShowHintsOnInitialRender={true}
-										keyboardType="default"
-										hintOverride={this.state.disableHints ? false : undefined}
-										onSubmit={() => {
-											this.setState({ firstTextInputDone: true });
+			<View style={styles.centeredView}>
+				<Modal
+					animationType="none"
+					transparent={true}
+					onRequestClose={this.onCancel}
+					visible={this.state.visible}>
+					<View style={styles.centeredView}>
+						<View style={styles.modalView}>
+							<View>
+								<Text style={styles.text_primary}>Name: </Text>
+								<AutoCompletionTextInput
+									hints={this.state.hints.name}
+									placeholder="Meal"
+									shouldShowHintsOnInitialRender={true}
+									keyboardType="default"
+									hintOverride={this.state.disableHints ? false : undefined}
+									onSubmit={() => {
+										this.setState({ firstTextInputDone: true });
+									}}
+									onChangeText={(name) => this.setState({ name })}
+								/>
+							</View>
+							<View>
+								<Text style={styles.text_primary}>Preis: </Text>
+								<AutoCompletionTextInput
+									hints={this.state.hints.price}
+									placeholder="12.3"
+									shouldShowHintsOnInitialRender={false}
+									keyboardType="numeric"
+									hintOverride={
+										this.state.disableHints
+											? false
+											: this.state.firstTextInputDone || undefined
+									}
+									onSubmit={() => {
+										this.setState({ firstTextInputDone: false });
+									}}
+									onChangeText={(v) => this.setState({ price: parseFloat(v) })}
+								/>
+							</View>
+							<View style={styles.checkbox_wrapper}>
+								<Text style={styles.text_primary}>Einnahme:</Text>
+								<View style={styles.checkbox}>
+									<Checkbox
+										disabled={false}
+										status={this.state.isIncome ? 'checked' : 'unchecked'}
+										color="#ffffffee"
+										uncheckedColor="#ffffffdd"
+										onPress={() => {
+											this.setState({ isIncome: !this.state.isIncome });
 										}}
-										onChangeText={(name) => this.setState({ name })}
 									/>
-								</View>
-								<View>
-									<Text style={styles.text_primary}>Preis: </Text>
-									<AutoCompletionTextInput
-										hints={this.state.hints.price}
-										placeholder="12.3"
-										shouldShowHintsOnInitialRender={false}
-										keyboardType="numeric"
-										hintOverride={
-											this.state.disableHints
-												? false
-												: this.state.firstTextInputDone || undefined
-										}
-										onSubmit={() => {
-											this.setState({ firstTextInputDone: false });
-										}}
-										onChangeText={(v) =>
-											this.setState({ price: parseFloat(v) })
-										}
-									/>
-								</View>
-								<View style={styles.checkbox_wrapper}>
-									<Text style={styles.text_primary}>Einnahme:</Text>
-									<View style={styles.checkbox}>
-										<Checkbox
-											disabled={false}
-											status={this.state.isIncome ? 'checked' : 'unchecked'}
-											color="#ffffffee"
-											uncheckedColor="#ffffffdd"
-											onPress={() => {
-												this.setState({ isIncome: !this.state.isIncome });
-											}}
-										/>
-									</View>
-								</View>
-								<View style={styles.button_wrapper}>
-									<TouchableOpacity
-										onPress={this.onCancel}
-										style={styles.btn}
-										activeOpacity={0.3}>
-										<Text style={styles.btn_text}>CANCEL</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										onPress={this.onAdd}
-										style={styles.btn}
-										activeOpacity={0.3}>
-										<Text style={styles.btn_text}>ADD</Text>
-									</TouchableOpacity>
 								</View>
 							</View>
+							<View style={styles.button_wrapper}>
+								<TouchableOpacity
+									onPress={this.onCancel}
+									style={styles.btn}
+									activeOpacity={0.3}>
+									<Text style={styles.btn_text}>CANCEL</Text>
+								</TouchableOpacity>
+								<TouchableOpacity
+									onPress={this.onAdd}
+									style={styles.btn}
+									activeOpacity={0.3}>
+									<Text style={styles.btn_text}>ADD</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
-					</Modal>
-				</View>
+					</View>
+				</Modal>
 			</View>
 		);
 	}

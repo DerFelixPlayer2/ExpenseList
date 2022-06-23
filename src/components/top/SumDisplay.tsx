@@ -1,11 +1,10 @@
-import React, { createRef, useRef } from 'react';
+import React from 'react';
 import Storage from '../../Storage';
 import {
 	View,
 	Text,
 	StyleSheet,
 	ActivityIndicator,
-	FlatList,
 	Pressable,
 	Animated,
 	TouchableOpacity,
@@ -146,7 +145,6 @@ export default class SumDisplay extends React.Component<
 	};
 
 	private animateOpen = (callback?: () => void) => {
-		console.log('open');
 		Animated.timing(this.state.animValue, {
 			useNativeDriver: true,
 			toValue: 1,
@@ -156,7 +154,6 @@ export default class SumDisplay extends React.Component<
 	};
 
 	private animateClose = (callback?: () => void) => {
-		console.log('close');
 		Animated.timing(this.state.animValue, {
 			useNativeDriver: true,
 			toValue: 0,

@@ -12,7 +12,7 @@ import { IEntry } from './src/types';
 import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
 import EntryEditor from './src/components/main/editor/EntryEditor';
-import { Portal, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { eventEmitter } from './src/Globals';
 
 interface AppProps {
@@ -36,7 +36,7 @@ interface AppState {
  * - Purge entries
  *
  * FIX:
- * - autocompletion dropdowns are not closable when clicking outside of them
+ * - autocompletion dropdowns are not closable when clicking outside of them (might be fixable with the floating modal)
  * - autocompletion dropdowns have to be focused before they can be interacted with
  *
  * MIGHT BE FIXED, REQUIRES FURTHER TESTING:

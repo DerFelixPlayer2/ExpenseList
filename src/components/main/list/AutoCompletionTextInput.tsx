@@ -90,8 +90,7 @@ export default class AutoCompletionTextInput extends React.Component<
 		this.setState({ shouldShowHints: false });
 		if (this.state.value.length === 0) {
 			this.setState({
-				errorMessage:
-					/*'Field cannot be empty'*/ 'Feld muss einen Wert enthalten',
+				errorMessage: 'Feld muss einen Wert enthalten',
 			});
 		}
 	};
