@@ -206,7 +206,7 @@ export default class SumDisplay extends React.Component<
 							€ {(this.state.values[this.state.selected] as number).toFixed(2)}
 						</Text>
 						<Animated.Image
-							source={require('../../../assets/16_dropdown_arrow.png')}
+							source={require('../../../assets/32_dropdown_arrow_white.png')}
 							fadeDuration={0}
 							style={{
 								...styles.image,
@@ -265,7 +265,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	image: {
-		marginLeft: 10,
+		marginLeft: 5,
+		top: 1,
 	},
 	list: {
 		backgroundColor: '#cf4a1d',
