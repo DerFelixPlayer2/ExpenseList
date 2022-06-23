@@ -1,9 +1,17 @@
 import React from 'react';
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	NativeEventSubscription,
+	BackHandler,
+} from 'react-native';
 import Storage from '../../../Storage';
 import { eventEmitter } from '../../../Globals';
 import AutoCompletionTextInput from './AutoCompletionTextInput';
 import { Checkbox } from 'react-native-paper';
+import { ModalFloating } from '../../FloatingModal';
 
 interface PopUpProps {}
 
@@ -18,7 +26,7 @@ interface PopUpState {
 }
 
 export default class PopUp extends React.Component<PopUpProps, PopUpState> {
-	private: boolean = false;
+	private backHandler?: NativeEventSubscription;
 	state: PopUpState = {
 		name: '',
 		price: 0,
@@ -65,8 +73,20 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		);
 	};
 
+	private onBackPress = () => {
+		if (this.state.visible) {
+			this.onCancel();
+			return true;
+		}
+		return false;
+	};
+
 	async componentDidMount() {
 		eventEmitter.addListener('addButtonPressed', this.onAddButtonClick);
+		this.backHandler = BackHandler.addEventListener(
+			'hardwareBackPress',
+			this.onBackPress
+		);
 
 		const filtered: { name: string[]; price: number[] } = {
 			name: [],
@@ -97,82 +117,77 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 
 	componentWillUnmount() {
 		eventEmitter.removeListener('addButtonPressed', this.onAddButtonClick);
+		this.backHandler?.remove();
 	}
 
 	render() {
 		return (
-			<View style={styles.centeredView}>
-				<Modal
-					animationType="none"
-					transparent={true}
-					onRequestClose={this.onCancel}
-					visible={this.state.visible}>
-					<View style={styles.centeredView}>
-						<View style={styles.modalView}>
-							<View>
-								<Text style={styles.text_primary}>Name: </Text>
-								<AutoCompletionTextInput
-									hints={this.state.hints.name}
-									placeholder="Meal"
-									shouldShowHintsOnInitialRender={true}
-									keyboardType="default"
-									hintOverride={this.state.disableHints ? false : undefined}
-									onSubmit={() => {
-										this.setState({ firstTextInputDone: true });
+			<ModalFloating onBlur={this.onCancel} visible={this.state.visible}>
+				<View style={styles.centeredView}>
+					<View style={styles.modalView}>
+						<View>
+							<Text style={styles.text_primary}>Name: </Text>
+							<AutoCompletionTextInput
+								hints={this.state.hints.name}
+								placeholder="Meal"
+								shouldShowHintsOnInitialRender={true}
+								keyboardType="default"
+								hintOverride={this.state.disableHints ? false : undefined}
+								onSubmit={() => {
+									this.setState({ firstTextInputDone: true });
+								}}
+								onChangeText={(name) => this.setState({ name })}
+							/>
+						</View>
+						<View>
+							<Text style={styles.text_primary}>Preis: </Text>
+							<AutoCompletionTextInput
+								hints={this.state.hints.price}
+								placeholder="12.3"
+								shouldShowHintsOnInitialRender={false}
+								keyboardType="numeric"
+								hintOverride={
+									this.state.disableHints
+										? false
+										: this.state.firstTextInputDone || undefined
+								}
+								onSubmit={() => {
+									this.setState({ firstTextInputDone: false });
+								}}
+								onChangeText={(v) => this.setState({ price: parseFloat(v) })}
+							/>
+						</View>
+						<View style={styles.checkbox_wrapper}>
+							<Text style={styles.text_primary}>Einnahme:</Text>
+							<View style={styles.checkbox}>
+								<Checkbox
+									disabled={false}
+									status={this.state.isIncome ? 'checked' : 'unchecked'}
+									color="#ffffffee"
+									uncheckedColor="#ffffffdd"
+									onPress={() => {
+										this.setState({ isIncome: !this.state.isIncome });
 									}}
-									onChangeText={(name) => this.setState({ name })}
 								/>
-							</View>
-							<View>
-								<Text style={styles.text_primary}>Preis: </Text>
-								<AutoCompletionTextInput
-									hints={this.state.hints.price}
-									placeholder="12.3"
-									shouldShowHintsOnInitialRender={false}
-									keyboardType="numeric"
-									hintOverride={
-										this.state.disableHints
-											? false
-											: this.state.firstTextInputDone || undefined
-									}
-									onSubmit={() => {
-										this.setState({ firstTextInputDone: false });
-									}}
-									onChangeText={(v) => this.setState({ price: parseFloat(v) })}
-								/>
-							</View>
-							<View style={styles.checkbox_wrapper}>
-								<Text style={styles.text_primary}>Einnahme:</Text>
-								<View style={styles.checkbox}>
-									<Checkbox
-										disabled={false}
-										status={this.state.isIncome ? 'checked' : 'unchecked'}
-										color="#ffffffee"
-										uncheckedColor="#ffffffdd"
-										onPress={() => {
-											this.setState({ isIncome: !this.state.isIncome });
-										}}
-									/>
-								</View>
-							</View>
-							<View style={styles.button_wrapper}>
-								<TouchableOpacity
-									onPress={this.onCancel}
-									style={styles.btn}
-									activeOpacity={0.3}>
-									<Text style={styles.btn_text}>CANCEL</Text>
-								</TouchableOpacity>
-								<TouchableOpacity
-									onPress={this.onAdd}
-									style={styles.btn}
-									activeOpacity={0.3}>
-									<Text style={styles.btn_text}>ADD</Text>
-								</TouchableOpacity>
 							</View>
 						</View>
+						<View style={styles.button_wrapper}>
+							<TouchableOpacity
+								onPress={this.onCancel}
+								style={styles.btn}
+								activeOpacity={0.3}>
+								<Text style={styles.btn_text}>CANCEL</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={this.onAdd}
+								style={styles.btn}
+								activeOpacity={0.3}>
+								<Text style={styles.btn_text}>ADD</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
-				</Modal>
-			</View>
+				</View>
+			</ModalFloating>
 		);
 	}
 }
