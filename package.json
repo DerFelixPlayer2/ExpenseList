@@ -41,5 +41,9 @@
 		"@types/react-dom": "~17.0.17",
 		"shell-quote": "^1.7.3"
 	},
-	"private": true
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/DerFelixPlayer2/ExpenseList.git"
+	}
 }
