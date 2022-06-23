@@ -3,7 +3,7 @@ import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import Storage from '../../../Storage';
 import { eventEmitter } from '../../../Globals';
 import AutoCompletionTextInput from './AutoCompletionTextInput';
-import CheckBox from '@react-native-community/checkbox';
+import { Checkbox } from 'react-native-paper';
 
 interface PopUpProps {}
 
@@ -23,7 +23,7 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 		name: '',
 		price: 0,
 		isIncome: false,
-		visible: false,
+		visible: true,
 		firstTextInputDone: false,
 		disableHints: false,
 		hints: { name: [], price: [] },
@@ -144,21 +144,20 @@ export default class PopUp extends React.Component<PopUpProps, PopUpState> {
 										}
 									/>
 								</View>
-								{/* <View style={styles.checkbox_wrapper}>
+								<View style={styles.checkbox_wrapper}>
 									<Text style={styles.text_primary}>Einnahme:</Text>
-									<CheckBox
-										style={styles.checkbox}
-										disabled={false}
-										value={this.state.isIncome}
-										tintColors={{
-											true: '#ffffffee',
-											false: '#ffffffdd',
-										}}
-										onValueChange={(isIncome: boolean) => {
-											this.setState({ isIncome });
-										}}
-									/>
-								</View> */}
+									<View style={styles.checkbox}>
+										<Checkbox
+											disabled={false}
+											status={this.state.isIncome ? 'checked' : 'unchecked'}
+											color="#ffffffee"
+											uncheckedColor="#ffffffdd"
+											onPress={() => {
+												this.setState({ isIncome: !this.state.isIncome });
+											}}
+										/>
+									</View>
+								</View>
 								<View style={styles.button_wrapper}>
 									<TouchableOpacity
 										onPress={this.onCancel}
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
 	btn: {
 		width: 80,
 		padding: 12,
-		paddingTop: 40,
+		paddingTop: 30,
 
 		display: 'flex',
 		justifyContent: 'center',
@@ -245,11 +244,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
-
-		marginTop: 10,
-		marginBottom: 5,
 	},
 	checkbox: {
-		top: 8,
+		top: 13,
 	},
 });

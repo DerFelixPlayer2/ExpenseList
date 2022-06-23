@@ -74,12 +74,12 @@ export default class EntryEditor extends React.Component<
 				onPress={() => {
 					eventEmitter.emit('backgroundClicked');
 				}}>
-				{/* <>
+				<>
 					<Text style={styles.text_secondary}>Typ:</Text>
 					<Text style={styles.text_primary}>
 						{parseFloat(this.state.price) < 0 ? 'Einnahme' : 'Ausgabe'}
 					</Text>
-				</> */}
+				</>
 				<>
 					<Text style={styles.text_secondary}>Name:</Text>
 					<EditableText
