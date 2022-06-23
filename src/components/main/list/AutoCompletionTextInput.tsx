@@ -6,8 +6,10 @@ import {
 	FlatList,
 	StyleSheet,
 	TouchableOpacity,
+	Keyboard,
 } from 'react-native';
 import { eventEmitter } from '../../../Globals';
+import { ModalFloating } from '../../FloatingModal';
 
 interface AutoCompletionTextInputProps {
 	style?: any;
@@ -25,6 +27,8 @@ interface AutoCompletionTextInputState {
 	shouldShowHints: boolean;
 	errorMessage: string;
 	value: string;
+	layout: { x: number; y: number };
+	textInputRef: React.RefObject<TextInput>;
 }
 
 export default class AutoCompletionTextInput extends React.Component<
@@ -39,6 +43,8 @@ export default class AutoCompletionTextInput extends React.Component<
 			this.props.hintOverride === undefined
 				? this.props.shouldShowHintsOnInitialRender || false
 				: this.props.hintOverride,
+		textInputRef: React.createRef<TextInput>(),
+		layout: { x: 0, y: 0 },
 	};
 
 	private onChangeText = (value: string) => {
@@ -95,6 +101,24 @@ export default class AutoCompletionTextInput extends React.Component<
 		}
 	};
 
+	private getAbsolutePosition: () => { x: number; y: number } = () => {
+		return {
+			x: this.state.layout.x,
+			y: this.state.layout.y,
+		};
+	};
+
+	componentDidUpdate(prevProps: Readonly<AutoCompletionTextInputProps>) {
+		if (
+			prevProps.hintOverride !== this.props.hintOverride &&
+			this.props.hintOverride !== undefined
+		) {
+			this.setState({
+				shouldShowHints: this.props.hintOverride,
+			});
+		}
+	}
+
 	componentDidMount() {
 		this.updateHints();
 		eventEmitter.addListener('invalidPopupValues', this.onSubmitInvalidValues);
@@ -108,9 +132,25 @@ export default class AutoCompletionTextInput extends React.Component<
 	}
 
 	render() {
+		this.state.textInputRef.current?.measure((_, __, ___, ____, x, y) => {
+			if (this.state.layout.x !== x || this.state.layout.y !== y) {
+				this.setState({ layout: { x, y } });
+				console.log(x, y);
+			}
+		});
+
 		return (
 			<View style={this.getStyle()}>
 				<TextInput
+					onLayout={() => {
+						this.state.textInputRef.current?.measure(
+							(_, __, ___, ____, x, y) => {
+								this.setState({ layout: { x, y } });
+								console.log(x, y);
+							}
+						);
+					}}
+					ref={this.state.textInputRef}
 					style={styles.text_input}
 					value={this.state.value}
 					placeholder={this.props.placeholder}
@@ -121,34 +161,46 @@ export default class AutoCompletionTextInput extends React.Component<
 					autoCorrect={false}
 					blurOnSubmit={true}
 					onChangeText={this.onChangeText}
-					onFocus={() => this.setState({ shouldShowHints: true })}
+					onFocus={() => {
+						this.setState({ shouldShowHints: true });
+						if (this.state.errorMessage.length > 0) {
+							this.forceUpdate();
+						}
+					}}
 					onSubmitEditing={() => {
 						this.setState({ shouldShowHints: false });
 						this.props.onSubmit && this.props.onSubmit();
 					}}
 				/>
-				{(this.props.hintOverride === undefined
-					? this.state.shouldShowHints
-					: this.props.hintOverride) &&
-					this.state.matchingHints.length !== 0 && (
-						<FlatList
-							style={styles.list}
-							data={this.state.matchingHints.map((title, i) => {
-								return { title, id: i.toString() };
-							})}
-							renderItem={({ item }) => this.renderItem(item)}
-						/>
-					)}
-				{!(this.props.hintOverride === undefined
-					? this.state.shouldShowHints
-					: this.props.hintOverride) &&
-					this.state.matchingHints.length !== 0 &&
-					this.state.errorMessage.length > 0 && (
-						<>
-							<View style={styles.error_placeholder} />
-							<Text style={styles.text_error}>{this.state.errorMessage}</Text>
-						</>
-					)}
+
+				<ModalFloating
+					onBlur={() => {
+						this.setState({ shouldShowHints: false });
+						Keyboard.dismiss();
+					}}
+					visible={
+						this.state.shouldShowHints && this.state.matchingHints.length !== 0
+					}>
+					<FlatList
+						style={{
+							...styles.list,
+							opacity: this.state.layout.x === 0 ? 0 : 1,
+							top: this.getAbsolutePosition().y - 5,
+							left: this.getAbsolutePosition().x,
+						}}
+						data={this.state.matchingHints.map((title, i) => {
+							return { title, id: i.toString() };
+						})}
+						renderItem={({ item }) => this.renderItem(item)}
+					/>
+				</ModalFloating>
+
+				{!this.state.shouldShowHints && this.state.errorMessage.length > 0 && (
+					<>
+						<View style={styles.error_placeholder} />
+						<Text style={styles.text_error}>{this.state.errorMessage}</Text>
+					</>
+				)}
 			</View>
 		);
 	}
@@ -161,7 +213,6 @@ const styles = StyleSheet.create({
 
 		width: 200,
 
-		//marginBottom: 15,
 		marginTop: 5,
 		paddingLeft: 10,
 		paddingRight: 10,
