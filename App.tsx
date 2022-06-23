@@ -24,34 +24,6 @@ interface AppState {
 	appState: ReactAppStateStatus;
 }
 
-/**
- * TODO:
- * - Add new app icon and loading screen (splash)
- * - Make autocompletion dropdown not suck
- * - Make add button have click feedback
- * - Make entries of sumdisplay dropdown fade in/out
- * - Reduce popup appear / disappear time
- * - rethink the handling of incomes in sumdisplay
- *
- * OPTIONAL:
- * - Search bar
- * - Purge entries
- *
- * FIX:
- * - autocompletion dropdowns are not closable when clicking outside of them (might be fixable with the floating modal)
- * - autocompletion dropdowns have to be focused before they can be interacted with
- *
- * MIGHT BE FIXED, REQUIRES FURTHER TESTING:
- * - Make entries persist after update of the app
- *
- * REQUEST:
- * - autocompletion dropdown should only contain prices that have existed for that name only
- *
- * NOTE:
- * - EditableText may cause problems in the furture due to the way updates are handled (state.needsUpdate)
- *
- */
-
 export default class App extends React.PureComponent<AppProps, AppState> {
 	private backHandler?: NativeEventSubscription;
 	private appStateHandler?: NativeEventSubscription;
