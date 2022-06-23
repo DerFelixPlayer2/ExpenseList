@@ -12,6 +12,7 @@ import { IEntry } from './src/types';
 import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
 import EntryEditor from './src/components/main/editor/EntryEditor';
+import { Portal, Provider as PaperProvider } from 'react-native-paper';
 import { eventEmitter } from './src/Globals';
 
 interface AppProps {
@@ -27,12 +28,12 @@ interface AppState {
  * TODO:
  * - Add new app icon and loading screen (splash)
  * - Make autocompletion dropdown not suck
- * - Improve the way incomes are handled
- *   - SumDisplay
+ * - Rework Popup Modal (use Portal)
  *
  * OPTIONAL:
  * - Search bar
  * - Reduce time between clicking the add button and the popup showing up
+ * - Purge entries
  *
  * FIX:
  * - autocompletion dropdowns are not closable when clicking outside of them
@@ -95,23 +96,28 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 
 	render() {
 		return (
-			<View style={styles.window}>
-				<View style={styles.container}>
-					<TopNav style={styles.top} />
-					{this.state.entryEditor !== null ? (
-						<EntryEditor entry={this.state.entryEditor} style={styles.editor} />
-					) : (
-						<ExpenseList
-							style={styles.list}
-							onPress={(entry) => {
-								this.setState({ entryEditor: entry });
-								eventEmitter.emit('leaveList');
-							}}
-						/>
-					)}
+			<PaperProvider>
+				<View style={styles.window}>
+					<View style={styles.container}>
+						<TopNav style={styles.top} />
+						{this.state.entryEditor !== null ? (
+							<EntryEditor
+								entry={this.state.entryEditor}
+								style={styles.editor}
+							/>
+						) : (
+							<ExpenseList
+								style={styles.list}
+								onPress={(entry) => {
+									this.setState({ entryEditor: entry });
+									eventEmitter.emit('leaveList');
+								}}
+							/>
+						)}
+					</View>
+					<StatusBar style="auto" />
 				</View>
-				<StatusBar style="auto" />
-			</View>
+			</PaperProvider>
 		);
 	}
 }
@@ -136,6 +142,7 @@ const styles = StyleSheet.create({
 		flexBasis: '15%',
 		flexGrowing: 1,
 		flexShrink: 1,
+		zIndex: 1,
 	},
 	list: {
 		width: '100%',

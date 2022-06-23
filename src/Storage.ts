@@ -4,12 +4,13 @@ import { MMKVLoader } from 'react-native-mmkv-storage';
 import { eventEmitter } from "./Globals";
 
 export default class Storage {
+    private static instanceId = 'app.data';
     private static key = 'entries';
     private static instance: Storage | null = null;
     private storage;
 
     private constructor() {
-        this.storage = new MMKVLoader().withInstanceID('app-data').initialize();
+        this.storage = new MMKVLoader().withInstanceID(Storage.instanceId).initialize();
     }
 
     public static async getInstance() {
