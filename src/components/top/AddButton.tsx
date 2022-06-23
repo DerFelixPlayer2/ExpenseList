@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { eventEmitter } from '../../Globals';
 
 interface AddButtonProps {
@@ -25,11 +25,14 @@ export default class AddButton extends React.Component<
 
 	render() {
 		return (
-			<Pressable style={this.getStyles()} onPress={this.onPress}>
+			<TouchableOpacity
+				style={this.getStyles()}
+				onPress={this.onPress}
+				activeOpacity={0.4}>
 				<View style={styles.inner_v1} />
 				<View style={styles.inner_h} />
 				<View style={styles.inner_v2} />
-			</Pressable>
+			</TouchableOpacity>
 		);
 	}
 }
