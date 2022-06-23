@@ -133,6 +133,7 @@ export default class SumDisplay extends React.Component<
 				activeOpacity={0.3}
 				onPress={() => {
 					this.onSelect(title);
+					this.close();
 				}}>
 				<Text
 					style={{
@@ -142,6 +143,10 @@ export default class SumDisplay extends React.Component<
 				</Text>
 			</TouchableOpacity>
 		);
+	};
+
+	private close = () => {
+		this.animateClose(() => this.setState({ modalVisible: false }));
 	};
 
 	private animateOpen = (callback?: () => void) => {
@@ -218,11 +223,7 @@ export default class SumDisplay extends React.Component<
 					</View>
 				</Pressable>
 
-				<ModalFloating
-					visible={this.state.modalVisible}
-					onBlur={() => {
-						this.animateClose(() => this.setState({ modalVisible: false }));
-					}}>
+				<ModalFloating visible={this.state.modalVisible} onBlur={this.close}>
 					<Animated.FlatList
 						onLayout={(e) => {
 							this.setState({
