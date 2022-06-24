@@ -133,14 +133,18 @@ export default class SumDisplay extends React.Component<
 				activeOpacity={0.3}
 				onPress={() => {
 					this.onSelect(title);
-					this.close();
+					setTimeout(this.close, 100);
 				}}>
-				<Text
+				<Animated.Text
 					style={{
 						..._style,
+						opacity: this.state.animValue.interpolate({
+							inputRange: [0, 1],
+							outputRange: [-0.8, 1],
+						}),
 					}}>
 					{title}
-				</Text>
+				</Animated.Text>
 			</TouchableOpacity>
 		);
 	};
@@ -300,5 +304,5 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		marginBottom: 3,
 	},
-	list_item_selected: { opacity: 0.7 },
+	list_item_selected: { color: '#ffffffcd' },
 });
