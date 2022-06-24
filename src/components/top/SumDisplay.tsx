@@ -82,11 +82,13 @@ export default class SumDisplay extends React.Component<
 		firstOfMonth.setUTCMonth(new Date().getUTCMonth());
 		firstOfMonth.setUTCDate(1);
 		firstOfMonth.setUTCHours(0, 0, 0, 0);
+		const newDate = new Date();
+		const dayOfWeek = newDate.getUTCDay();
 		const lastMonday = new Date();
-		if (lastMonday.getUTCDay() !== 1) {
-			lastMonday.setUTCDate(
-				lastMonday.getUTCDate() - lastMonday.getUTCDay() - 6
-			);
+		if (newDate.getUTCDay() == 0) {
+			lastMonday.setUTCDate(newDate.getUTCDate() - 7);
+		} else {
+			lastMonday.setUTCDate(newDate.getUTCDate() - (dayOfWeek - 1));
 		}
 		lastMonday.setUTCHours(0, 0, 0, 0);
 
