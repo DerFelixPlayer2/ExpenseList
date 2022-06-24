@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-	Modal,
-	Text,
-	StyleSheet,
-	View,
-	TouchableOpacity,
-} from 'react-native';
+import { Modal, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { ModalFloating } from '../../FloatingModal';
 
 interface DeleteModalProps {
 	style?: any;
@@ -22,39 +17,35 @@ export default class DeleteModal extends React.Component<
 > {
 	render() {
 		return (
-			<View style={styles.centeredView}>
-				<Modal
-					animationType="none"
-					transparent={true}
-					onRequestClose={this.props.onCancel}
-					visible={this.props.isVisible}>
-					<View style={styles.centeredView}>
-						<View style={styles.modalView}>
-							<View>
-								<Text style={styles.text_primary}>Aufgabe löschen?</Text>
-								<Text style={styles.text_secondary}>
-									Dieser Eintrag wird dadurch dauerhaft gelöscht. Der
-									Löschvorgang kann nicht rückgängig gemacht werden.
-								</Text>
-							</View>
-							<View style={styles.button_wrapper}>
-								<TouchableOpacity
-									style={styles.btn}
-									activeOpacity={0.3}
-									onPress={this.props.onCancel}>
-									<Text style={styles.btn_text}>NEIN</Text>
-								</TouchableOpacity>
-								<TouchableOpacity
-									style={styles.btn}
-									activeOpacity={0.3}
-									onPress={this.props.onConfirm}>
-									<Text style={styles.btn_text}>JA</Text>
-								</TouchableOpacity>
-							</View>
+			<ModalFloating
+				onBlur={this.props.onCancel}
+				visible={this.props.isVisible}>
+				<View style={styles.centeredView}>
+					<View style={styles.modalView}>
+						<View>
+							<Text style={styles.text_primary}>Eintrag löschen?</Text>
+							<Text style={styles.text_secondary}>
+								Dieser Eintrag wird dadurch dauerhaft gelöscht. Der Löschvorgang
+								kann nicht rückgängig gemacht werden.
+							</Text>
+						</View>
+						<View style={styles.button_wrapper}>
+							<TouchableOpacity
+								style={styles.btn}
+								activeOpacity={0.3}
+								onPress={this.props.onCancel}>
+								<Text style={styles.btn_text}>NEIN</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.btn}
+								activeOpacity={0.3}
+								onPress={this.props.onConfirm}>
+								<Text style={styles.btn_text}>JA</Text>
+							</TouchableOpacity>
 						</View>
 					</View>
-				</Modal>
-			</View>
+				</View>
+			</ModalFloating>
 		);
 	}
 }
