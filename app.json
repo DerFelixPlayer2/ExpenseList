@@ -1,34 +1,44 @@
 {
 	"expo": {
-		"name": "ExpenseList",
-		"slug": "ExpenseList",
-		"version": "1.0.0",
+		"name": "Expense List",
+		"description": "App to manage your expenses",
+		"slug": "expenseList",
+		"owner": "derfelixplayer2",
+		"privacy": "hidden",
+		"platforms": ["android"],
+		"githubUrl": "https://github.com/DerFelixPlayer2/ExpenseList.git",
 		"orientation": "portrait",
-		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "dark",
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
+		"backgroundColor": "#000000",
+		"primaryColor": "#292938",
+		"icon": "./assets/icon.png",
+		"androidNavigationBar": {
+			"backgroundColor": "#292938"
 		},
 		"updates": {
-			"fallbackToCacheTimeout": 0
+			"enabled": false
 		},
 		"assetBundlePatterns": ["**/*"],
+		"splash": {
+			"backgroundColor": "#292938",
+			"resizeMode": "contain",
+			"image": "./assets/splash.png"
+		},
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "de.lolgamr17.expenselist"
 		},
 		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#FFFFFF"
-			},
 			"package": "de.lolgamr17.expenselist",
-			"softwareKeyboardLayoutMode": "pan"
+			"softwareKeyboardLayoutMode": "pan",
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive_icon.png",
+				"backgroundColor": "#cf4a1d"
+			}
 		},
 		"web": {
-			"favicon": "./assets/favicon.png"
+			"favicon": "./assets/favicon.png",
+			"lang": "en"
 		}
 	}
 }

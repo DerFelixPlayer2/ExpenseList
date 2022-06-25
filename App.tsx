@@ -12,6 +12,7 @@ import { IEntry } from './src/types';
 import ExpenseList from './src/components/main/list/ExpenseList';
 import TopNav from './src/components/top/TopNav';
 import EntryEditor from './src/components/main/editor/EntryEditor';
+import * as NavigationBar from 'expo-navigation-bar';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { eventEmitter } from './src/Globals';
 
@@ -50,6 +51,8 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 	};
 
 	componentDidMount() {
+		NavigationBar.setBackgroundColorAsync('#cf4a1d');
+		eventEmitter.addListener('entryDeleted', this.onBackPress);
 		this.backHandler = BackHandler.addEventListener(
 			'hardwareBackPress',
 			this.onBackPress
@@ -58,8 +61,6 @@ export default class App extends React.PureComponent<AppProps, AppState> {
 			'change',
 			this.onAppStateChange
 		);
-
-		eventEmitter.addListener('entryDeleted', this.onBackPress);
 	}
 
 	componentWillUnmount() {

@@ -1,6 +1,8 @@
 <resources>
-  <color name="splashscreen_background">#ffffff</color>
-  <color name="iconBackground">#FFFFFF</color>
-  <color name="colorPrimary">#023c69</color>
-  <color name="colorPrimaryDark">#ffffff</color>
+  <color name="splashscreen_background">#292938</color>
+  <color name="iconBackground">#cf4a1d</color>
+  <color name="colorPrimary">#292938</color>
+  <color name="colorPrimaryDark">#292938</color>
+  <color name="navigationBarColor">#292938</color>
+  <color name="activityBackground">#000000</color>
 </resources>
